@@ -12,3 +12,11 @@ a {
 .navbar .icon {
   padding: 10px;
 }
+
+.recomendations .icon {
+  padding: 0 10px 0 0;
+}
+
+.recomendations .btn {
+  margin: 10px 0;
+}
