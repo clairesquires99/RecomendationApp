@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block title %} Home {% endblock %}
+
+{% block content %}
+<h1 class="text-center">Recomendations</h1>
+<div class="d-flex flex-column mt-3 recomendations">
+  <a href="{{ url_for('books') }}" class="btn btn-secondary btn-lg text-start"><i class="fa-solid fa-book-open icon"></i>Books</a>
+  <a href="" class="btn btn-secondary btn-lg text-start"><i class="fa-solid fa-video icon"></i>Films</a>
+  <a href="" class="btn btn-secondary btn-lg text-start"><i class="fa-solid fa-music icon"></i>Music</a>
+  <a href="" class="btn btn-secondary btn-lg text-start"><i class="fa-solid fa-podcast icon"></i>Podcasts</a>
+  <a href="" class="btn btn-secondary btn-lg text-start"><i class="fa-solid fa-file-lines icon"></i>Articles</a>
+</div>
+{% endblock %}
+
+
+
+ 
+
