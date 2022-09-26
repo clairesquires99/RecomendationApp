@@ -1,0 +1,36 @@
+{% extends 'base_login.html' %}
+{% block title %} Register {% endblock %}
+
+{% block content %}
+<div class="card position-absolute top-50 start-50 translate-middle" style="width: 18rem;">
+  <div class="card-body">
+    <h4 class="text-center">Welcome!</h4>
+    <p class="text-center mb-4">Register with your email address and then get started with your recomendations!</p>
+    <form>
+      <div class="form-outline mb-4">
+        <input type="text" id="firstname" class="form-control mb-1" placeholder="First name" />
+        <input type="test" id="lastname" class="form-control mb-1" placeholder="Last name" />
+        <input type="email" id="email" class="form-control" placeholder="Email" />
+      </div>
+
+      <button type="button" class="btn btn-primary mb-4 mx-auto d-block">Register</button>
+
+      <div class="text-center">
+        <p>Already registered? <a href="{{ url_for('login') }}">Login</a></p>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+

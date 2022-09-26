@@ -1,0 +1,36 @@
+{% extends 'base_login.html' %}
+{% block title %} Login {% endblock %}
+
+{% block content %}
+
+<div class="card position-absolute top-50 start-50 translate-middle" style="width: 18rem;">
+  <div class="card-body">
+    <h4 class="text-center mb-4">Welcome!</h4>
+    <form>
+      <div class="form-outline mb-4">
+        <input type="email" id="email" class="form-control" placeholder="Email" />
+      </div>
+  
+      <button type="button" class="btn btn-primary mb-4 mx-auto d-block">Login</button>
+
+      <div class="text-center">
+        <p>Not yet registered? <a href="{{ url_for('register') }}">Register</a></p>
+      </div>
+    </form>
+  </div>
+</div>
+
+  
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
