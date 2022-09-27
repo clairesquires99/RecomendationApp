@@ -1,6 +1,7 @@
 import os
 import json
 import requests
+import creds
 from flask import Flask, render_template, request
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.sql import func
@@ -40,7 +41,8 @@ def search():
         search_word = request.args.get('book')
         link = 'https://www.googleapis.com/books/v1/volumes?q='
         link += search_word
-        link += '&key=AIzaSyCKB_GagDe_bki1KZyGuUo4tC9rkTJujAY'
+        link += '&key='
+        link += creds.google_books_api
         response = requests.get(link)
         data = json.loads(response.content)
         books = data['items']
