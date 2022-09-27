@@ -1,5 +1,7 @@
 import os
-from flask import Flask, render_template, request, url_for, redirect
+import json
+import requests
+from flask import Flask, render_template, request
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.sql import func
 
@@ -30,6 +32,19 @@ def home():
 @app.route('/books/')
 def books():
     return render_template('books.html')
+
+@app.route('/search/')
+def search():
+    books = []
+    if 'book' in request.args:
+        search_word = request.args.get('book')
+        link = 'https://www.googleapis.com/books/v1/volumes?q='
+        link += search_word
+        link += '&key=AIzaSyCKB_GagDe_bki1KZyGuUo4tC9rkTJujAY'
+        response = requests.get(link)
+        data = json.loads(response.content)
+        books = data['items']
+    return render_template('dev_book_search.html', books=books)
 
 # DATABASES
 

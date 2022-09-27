@@ -20,3 +20,12 @@ a {
 .recomendations .btn {
   margin: 10px 0;
 }
+
+span {
+  display: inline-block;
+  font-size: 1rem;
+}
+
+.nospace {
+  font-size: 0px;
+}
