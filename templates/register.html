@@ -6,14 +6,15 @@
   <div class="card-body">
     <h4 class="text-center">Welcome!</h4>
     <p class="text-center mb-4">Register with your email address and then get started with your recomendations!</p>
-    <form>
+    <form method="POST" role="form">
       <div class="form-outline mb-4">
-        <input type="text" id="firstname" class="form-control mb-1" placeholder="First name" />
-        <input type="test" id="lastname" class="form-control mb-1" placeholder="Last name" />
-        <input type="email" id="email" class="form-control" placeholder="Email" />
+        <input type="text" name = "firstname" id="firstname" class="form-control mb-1" placeholder="First name" />
+        <input type="text" name="lastname" id="lastname" class="form-control mb-1" placeholder="Last name" />
+        <input type="email" name="email" id="email" class="form-control" placeholder="Email" />
       </div>
 
-      <button type="button" class="btn btn-primary mb-4 mx-auto d-block">Register</button>
+      <button type="submit" class="btn btn-primary mb-4 mx-auto d-block">Register</button>
+      <!-- <input type="submit" class="btn btn-primary mb-4 mx-auto d-block" value="Register"> -->
 
       <div class="text-center">
         <p>Already registered? <a href="{{ url_for('login') }}">Login</a></p>

@@ -1,3 +1,4 @@
+import email
 import os
 import json
 import requests
@@ -22,9 +23,21 @@ db = SQLAlchemy(app)
 def login():
     return render_template('login.html')
 
-@app.route('/register/')
+@app.route('/register/', methods=["GET", "POST"])
 def register():
+    if request.method == "POST":
+        firstname = request.form["firstname"]
+        lastname = request.form["lastname"]
+        email = request.form["email"]
+        new_user = User(firstname = firstname, lastname = lastname, email = email)
+        db.session.add(new_user)
+        db.session.commit()
+        return "Boop boop you're registered!"
     return render_template('register.html')
+
+@app.route('/logout/')
+def logout():
+    return 'Logout'
 
 @app.route('/home/')
 def home():
@@ -51,11 +64,25 @@ def search():
 # DATABASES
 
 class User(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, primary_key=True)
     firstname = db.Column(db.String(100), nullable=False)
     lastname = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(80), unique=True, nullable=False)
  
     # gives each object a recognisable string representation for debugging purposes
-    def __repr__(self):
-        return f'<User {self.email}>'
+    # def __repr__(self):
+    #     return f'<User {self.email}>'
+
+class Follower(db.Model):
+    # A follows B
+    id = db.Column(db.Integer, primary_key=True)
+    user_A_id = db.Column(db.Integer, db.ForeignKey('user.user_id'), nullable = False)
+    user_B_id = db.Column(db.Integer, db.ForeignKey('user.user_id'), nullable = False)
+
+class BooksRecomended(db.Model):
+    # A recomended book to B
+    # B must follow A
+    id = db.Column(db.Integer, primary_key=True)
+    user_A_id = db.Column(db.Integer, db.ForeignKey('user.user_id'), nullable = False)
+    user_B_id = db.Column(db.Integer, db.ForeignKey('user.user_id'), nullable = False)
+    book_id = db.Column(db.String(12), nullable = False)
