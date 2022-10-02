@@ -6,13 +6,21 @@
 <div class="card position-absolute top-50 start-50 translate-middle" style="width: 18rem;">
   <div class="card-body">
     <h4 class="text-center mb-4">Welcome!</h4>
-    <form>
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+      <div class="alert alert-danger" role="alert">
+        {{ messages[0] }}
+      </div>
+    {% endif %}
+    {% endwith %}
+    <form method="POST" role="form" action="/login">
       <div class="form-outline mb-4">
-        <input type="email" id="email" class="form-control mb-1" placeholder="Email" />
+        <input type="email" name="email" class="form-control mb-1" placeholder="Email" />
         <input type="password" name="password" class="form-control" placeholder="Password">
+        <input type="checkbox" name="remember" id="remember">Remember me
       </div>
   
-      <button type="button" class="btn btn-primary mb-4 mx-auto d-block">Login</button>
+      <button type="submit" class="btn btn-primary mb-4 mx-auto d-block">Login</button>
 
       <div class="text-center">
         <p><a href="{{ url_for('auth.signup') }}">Sign Up</a></p>
