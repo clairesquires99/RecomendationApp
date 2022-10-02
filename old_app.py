@@ -2,10 +2,12 @@ import email
 import os
 import json
 import requests
-import creds
-from flask import Flask, render_template, request
+# import creds
+from flask import Flask, render_template, request, redirect
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.sql import func
+from flask_login import LoginManager, LoginForm, login_user
+login_manager = LoginManager()
 
 basedir = os.path.abspath(os.path.dirname(__file__)) # absolute path of current dir
 
@@ -19,9 +21,23 @@ db = SQLAlchemy(app)
 # ROUTES
 
 @app.route('/')
-@app.route('/login/')
+@app.route('/login/', methods=["GET", "POST"])
 def login():
+    form = LoginForm()
+    if form.validate_on_submit():
+        user = User.query.get(form.email.data)
+        if user:
+            # bcrypt.check_password_hash(user.password, form.password.data)
+            # if user.password == form.password.data:
+                user.authenticated = True
+                # db.session.add(user)
+                # db.session.commit()
+                login_user(user, remember=True)
+                return redirect(url_for('home.html'))
     return render_template('login.html')
+
+@login_manager.user_loader
+def user_loader(user_id): return User.query.get(user_id)
 
 @app.route('/register/', methods=["GET", "POST"])
 def register():
@@ -35,7 +51,7 @@ def register():
         return "Boop boop you're registered!"
     return render_template('register.html')
 
-@app.route('/logout/')
+@app.route('/logout/', methods=["GET"])
 def logout():
     return 'Logout'
 
@@ -68,6 +84,20 @@ class User(db.Model):
     firstname = db.Column(db.String(100), nullable=False)
     lastname = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(80), unique=True, nullable=False)
+    password = db.Column(db.String(20), nullable=False)
+    authenticated = db.Column(db.Boolean, default=False)
+
+    def is_active(self):
+        return True
+
+    def get_id(self):
+        return self.user_id
+
+    def is_authenticated(self):
+        return self.authenticated
+
+    def is_anonymous(self):
+        return False
  
     # gives each object a recognisable string representation for debugging purposes
     # def __repr__(self):
