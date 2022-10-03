@@ -29,3 +29,7 @@ span {
 .nospace {
   font-size: 0px;
 }
+
+.profile a {
+  margin: 5px;
+}

@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block title %} Profile {% endblock %}
+
+{% block content %}
+<h1 class="text-center">Profile</h1>
+
+
+<div class="profile d-flex justify-content-center">
+  <a class="btn btn-primary" href="{{ url_for('main.show_followers') }}" role="button">Followers</a>
+  <a class="btn btn-primary" href="{{ url_for('main.show_following') }}" role="button">Following</a>
+</div>
+
+{% endblock %}
