@@ -31,7 +31,8 @@ def show_followers():
 @main.route('/following')
 @login_required
 def show_following():
-    following = Follower.query.all()
-    return render_template('followers.html', following=following)
+    followers = db.session.query(Follower.user_B_id).filter(Follower.user_A_id == current_user.id).subquery()
+    users = User.query.join(followers, User.id == followers.c.user_B_id)
+    return render_template('following.html', following=users)
 
 
