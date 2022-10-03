@@ -4,6 +4,20 @@
 {% block content %}
 <h1 class="text-center">Following</h1>
 
+{% for message in get_flashed_messages(with_categories=True) %}
+  <div class="alert alert-{{ message[0] }}" role="alert">
+    {{ message[1] }}
+  </div>
+{% endfor %}
+
+<form method="POST" role="form" action="/follow_new">
+  <div class="form-outline mb-4 d-flex">
+    <input type="email" name="email" class="form-control me-1" placeholder="Email" />
+    <button type="submit" class="btn btn-primary">Follow</button>
+  </div>
+</form>
+
+
 <div class="d-flex flex-column mt-3">
   {% for f in following %}
     <div class="card w-100 mb-2">
