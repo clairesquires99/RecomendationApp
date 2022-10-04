@@ -3,14 +3,35 @@
 
 {% block content %}
 <h1 class="text-center">Books</h1>
+
+<form method="POST" role="form" action="/books">
+  <div class="d-flex">
+    <button type="submit" name="recomended" value="to user" class="btn btn-primary text-wrap me-1">Recomended to me</button>
+    <button type="submit" name="recomended" value="by user" class="btn btn-primary text-wrap ms-1">Recomended by me</button>
+  </div>
+</form>
+
 <div class="d-flex flex-column mt-3">
-  <div class="card w-100">
+  {% for book in books %}
+  <div class="card w-100 mb-2">
     <div class="card-body">
-      <h5 class="card-title">Book Title</h5>
-      <h6 class="card-subtitle mb-2 text-muted">by Example Author</h6>
-      <p class="card-text">Recomended by: Jane Doe</p>
-      <a href="#" class="card-link">link</a>
+      <h5 class="card-title">{{book['volumeInfo']['title']}}</h5>
+      <h6 class="card-subtitle mb-2 text-muted nospace"><nobr><span>by&nbsp;</span>
+
+        {% set authors = book['volumeInfo']['authors'] %}
+        <span>{{authors[0]}}</span>
+        {% if authors|length > 2 %}
+          {% for author in authors[1:] %}
+            <span>, {{author}}</span>
+          {% endfor %}
+        {% endif %}
+      </nobr></h6>
+    
+      <!-- <p class="card-text">Recomended by: Jane Doe</p> -->
+      
     </div>
   </div>
+  {% endfor %}
 </div>
+
 {% endblock %}

@@ -1,8 +1,11 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import login_required, current_user
+import json
+import requests
 
 from .models import *
 from . import db
+from . import creds
 
 main = Blueprint('main', __name__)
 
@@ -19,7 +22,62 @@ def profile():
 @main.route('/books')
 @login_required
 def books():
-    return render_template('books.html')
+    # by default show books recomended to user
+    book_ids = db.session.query(BooksRecomended.book_id).filter(BooksRecomended.user_B_id == current_user.id).all()
+    books = []
+    if book_ids:
+        link = 'https://www.googleapis.com/books/v1/volumes/'
+        for b in book_ids:
+            response = requests.get(link + b.book_id)
+            if response.status_code == 200:
+                data = json.loads(response.content)
+                books.append(data)
+
+    return render_template('books.html', books=books)
+
+@main.route('/books', methods=['POST'])
+@login_required
+def books_post():
+    if request.form['recomended'] == "to user":
+        book_ids = db.session.query(BooksRecomended.book_id).filter(BooksRecomended.user_B_id == current_user.id).all()
+    elif request.form['recomended'] == "by user":
+        book_ids = db.session.query(BooksRecomended.book_id).filter(BooksRecomended.user_A_id == current_user.id).all()
+    books = [] 
+    if book_ids:
+        link = 'https://www.googleapis.com/books/v1/volumes/'
+        for b in book_ids:
+            response = requests.get(link + b.book_id)
+            if response.status_code == 200:
+                data = json.loads(response.content)
+                books.append(data)
+    return render_template('books.html', books=books)
+
+
+
+
+
+
+
+
+@main.route('/books/search')
+@login_required
+def books_search():
+    books = []
+    if 'book' in request.args:
+        search_word = request.args.get('book')
+        link = 'https://www.googleapis.com/books/v1/volumes?q='
+        link += search_word
+        link += '&key='
+        link += creds.google_books_api
+        response = requests.get(link)
+        data = json.loads(response.content)
+        books = data['items']
+    return render_template('dev_book_search.html', books=books)
+
+@main.route('/books/recomend')
+@login_required
+def books_recomend():
+    pass
 
 @main.route('/followers')
 @login_required

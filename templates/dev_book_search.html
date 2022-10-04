@@ -19,22 +19,29 @@
 <div class="d-flex flex-column mt-3">
   {% for book in books %}
   <div class="card w-100 mb-2">
-    <div class="card-body">
+    <div class="card-body d-flex justify-content-between">
       
-      <h5 class="card-title">{{book['volumeInfo']['title']}}</h5>
-      <h6 class="card-subtitle mb-2 text-muted nospace"><nobr><span>by&nbsp;</span>
+      <div>
+        <h5 class="card-title">{{book['volumeInfo']['title']}}</h5>
+        <h6 class="card-subtitle mb-2 text-muted nospace"><nobr><span>by&nbsp;</span>
+          {% set authors = book['volumeInfo']['authors'] %}
+          <span>{{authors[0]}}</span>
+          {% if authors|length > 2 %}
+            {% for author in authors[1:] %}
+              <span>, {{author}}</span>
+            {% endfor %}
+          {% endif %}
+        </nobr></h6>
+      </div>
 
-        {% set authors = book['volumeInfo']['authors'] %}
-        <span>{{authors[0]}}</span>
-        {% if authors|length > 2 %}
-          {% for author in authors[1:] %}
-            <span>, {{author}}</span>
-          {% endfor %}
-        {% endif %}
-      </nobr></h6>
-    
-      <!-- <p class="card-text">Recomended by: Jane Doe</p>
-      <a href="#" class="card-link">link</a> -->
+      <div>
+        <form method="POST" role="form" action="/books/recomend">
+          <button type="submit" class="btn btn-primary btn-sm">
+            <i class="fa-solid fa-star"></i>
+          </button>
+        </form>
+      </div>
+
     </div>
   </div>
   {% endfor %}
