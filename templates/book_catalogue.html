@@ -1,7 +1,9 @@
 {% extends 'base.html' %}
-{% block title %} Development book search {% endblock %}
+{% block title %} Book catalogue {% endblock %}
 
 {% block content %}
+
+<p class="text-center">Search for any book, and then recommend it to anyone you are following.</p>
 
 <form>
   <div class="form-outline d-flex">
@@ -13,7 +15,7 @@
 </form>
 
 {% if books %}
-<h3 class="text-center mt-3">Results</h3>
+<h6 class="text-center mt-3">Results</h6>
 {% endif %}
 
 <div class="d-flex flex-column mt-3">
@@ -37,7 +39,7 @@
       <div>
         <form method="POST" role="form" action="/books/recomend">
           <button type="submit" name="recomend" value="{{book['id']}}" class="btn btn-primary btn-sm ms-2">
-            <i class="fa-solid fa-star"></i>
+            <i class="fa-solid fa-wand-magic-sparkles"></i>
           </button>
         </form>
       </div>

@@ -7,7 +7,7 @@
 <h6 class="text-center">{{ user.email }}</h6>
 
 <form method="POST" role="form" action="/profile">
-  <div class="d-flex justify-content-center mb-2">
+  <div class="d-flex justify-content-center mb-2 list">
     {% if followers %}
       <button type="submit" name="show" value="following" class="btn btn-primary m-1">Following</button>
       <button type="submit" name="show" value="followers" class="btn btn-primary m-1 active">Followers</button>

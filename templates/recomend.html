@@ -4,7 +4,6 @@
 {% block content %}
 <h6 class="text-center">Recomend the book</h6>
 
-<!-- Book tile -->
 <div class="d-flex flex-column mt-3 mb-1">
   <div class="card w-100 mb-2">
     <div class="card-body">
@@ -36,7 +35,7 @@
         <div>
           <form method="POST" role="form" action="/books/recomend">
             <button type="submit" name="recomend_new" value="[{{ f.id }},{{ book['id'] }}]" class="btn btn-primary btn-sm ms-2">
-              <i class="fa-solid fa-star"></i>
+              <i class="fa-solid fa-wand-magic-sparkles"></i>
             </button>
           </form>
         </div>

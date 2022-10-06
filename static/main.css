@@ -18,6 +18,10 @@ a {
   width: 200px;
 }
 
+.list .btn {
+  width: 110px;
+}
+
 span {
   display: inline-block;
   font-size: 1rem;

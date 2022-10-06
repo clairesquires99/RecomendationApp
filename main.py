@@ -28,15 +28,17 @@ def books():
                 data = json.loads(response.content)
                 books.append(data)
 
-    return render_template('books.html', books=books)
+    return render_template('books.html', books=books, recs_to_user=True)
 
 @main.route('/books', methods=['POST'])
 @login_required
 def books_post():
     if request.form['recomended'] == "to user":
         book_ids = db.session.query(BooksRecomended.book_id).filter(BooksRecomended.user_B_id == current_user.id).all()
+        recs_to_user = True
     elif request.form['recomended'] == "by user":
         book_ids = db.session.query(BooksRecomended.book_id).filter(BooksRecomended.user_A_id == current_user.id).all()
+        recs_to_user = False
     books = [] 
     if book_ids:
         link = 'https://www.googleapis.com/books/v1/volumes/'
@@ -45,9 +47,9 @@ def books_post():
             if response.status_code == 200:
                 data = json.loads(response.content)
                 books.append(data)
-    return render_template('books.html', books=books)
+    return render_template('books.html', books=books, recs_to_user=recs_to_user)
 
-@main.route('/books/search')
+@main.route('/books/catalogue')
 @login_required
 def books_search():
     books = []
@@ -61,7 +63,7 @@ def books_search():
         if response.status_code == 200:
             data = json.loads(response.content)
             books = data['items']
-    return render_template('dev_book_search.html', books=books)
+    return render_template('book_catalogue.html', books=books)
 
 @main.route('/books/recomend', methods=['POST'])
 @login_required
