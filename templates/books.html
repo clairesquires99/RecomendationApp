@@ -4,6 +4,13 @@
 {% block content %}
 <h1 class="text-center">Books</h1>
 
+
+{% for message in get_flashed_messages(with_categories=True) %}
+  <div class="alert alert-{{ message[0] }}" role="alert">
+    {{ message[1] }}
+  </div>
+{% endfor %}
+
 <form method="POST" role="form" action="/books">
   <div class="d-flex">
     <button type="submit" name="recomended" value="to user" class="btn btn-primary text-wrap me-1">Recomended to me</button>

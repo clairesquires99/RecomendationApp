@@ -52,13 +52,6 @@ def books_post():
                 books.append(data)
     return render_template('books.html', books=books)
 
-
-
-
-
-
-
-
 @main.route('/books/search')
 @login_required
 def books_search():
@@ -70,14 +63,39 @@ def books_search():
         link += '&key='
         link += creds.google_books_api
         response = requests.get(link)
-        data = json.loads(response.content)
-        books = data['items']
+        if response.status_code == 200:
+            data = json.loads(response.content)
+            books = data['items']
     return render_template('dev_book_search.html', books=books)
 
-@main.route('/books/recomend')
+@main.route('/books/recomend', methods=['POST'])
 @login_required
 def books_recomend():
-    pass
+    if request.form.get('recomend_new'):
+        string = request.form.get('recomend_new')
+        l = string.strip('][').split(',') # return string to list
+        a = current_user.id
+        b = int(l[0])
+        book = l[1].strip(' ')
+        new = BooksRecomended(user_A_id = a, user_B_id = b, book_id = book)
+        db.session.add(new)
+        db.session.commit()
+        flash('You successfully recomended a new book!', 'success')
+        return redirect(url_for('main.books'))
+
+    elif request.form.get('recomend'):
+        link = 'https://www.googleapis.com/books/v1/volumes/'
+        link += request.form['recomend']
+        response = requests.get(link)
+        if response.status_code == 200:
+            book = json.loads(response.content)
+        followers = db.session.query(Follower.user_A_id).filter(Follower.user_B_id == current_user.id).subquery()
+        users = User.query.join(followers, User.id == followers.c.user_A_id)
+        return render_template('recomend.html', book = book, followers = users)
+
+    else:
+        flash('There was a problem with this request.', 'danger')
+        return redirect(url_for('main.books'))
 
 @main.route('/followers')
 @login_required

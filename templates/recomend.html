@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% block title %} Recomend {% endblock %}
+
+{% block content %}
+<h6 class="text-center">Recomend the book</h6>
+
+<!-- Book tile -->
+<div class="d-flex flex-column mt-3 mb-1">
+  <div class="card w-100 mb-2">
+    <div class="card-body">
+      <h5 class="card-title">{{book['volumeInfo']['title']}}</h5>
+      <h6 class="card-subtitle mb-2 text-muted nospace"><nobr><span>by&nbsp;</span>
+
+        {% set authors = book['volumeInfo']['authors'] %}
+        <span>{{authors[0]}}</span>
+        {% if authors|length > 2 %}
+          {% for author in authors[1:] %}
+            <span>, {{author}}</span>
+          {% endfor %}
+        {% endif %}
+      </nobr></h6>
+    </div>
+  </div>
+</div>
+
+<h6 class="text-center">to any of your followers</h6>
+
+<div class="d-flex flex-column mt-3">
+  {% for f in followers %}
+    <div class="card w-100 mb-2">
+      <div class="card-body d-flex justify-content-between">
+        <div>
+          <h5 class="card-title">{{ f.firstname }} {{ f.lastname }}</h5>
+          <h6 class="card-subtitle mb-2 text-muted"> {{ f.email }} </h6>
+        </div>
+        <div>
+          <form method="POST" role="form" action="/books/recomend">
+            <button type="submit" name="recomend_new" value="[{{ f.id }},{{ book['id'] }}]" class="btn btn-primary btn-sm ms-2">
+              <i class="fa-solid fa-star"></i>
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  {% endfor %}
+</div>
+
+
+{% endblock %}
