@@ -1,8 +1,8 @@
 {% extends 'base.html' %}
-{% block title %} Recomend {% endblock %}
+{% block title %} recommend {% endblock %}
 
 {% block content %}
-<h6 class="text-center">Recomend the book</h6>
+<h6 class="text-center">recommend the book</h6>
 
 <div class="d-flex flex-column mt-3 mb-1">
   <div class="card w-100 mb-2">
@@ -33,8 +33,8 @@
           <h6 class="card-subtitle mb-2 text-muted"> {{ f.email }} </h6>
         </div>
         <div>
-          <form method="POST" role="form" action="/books/recomend">
-            <button type="submit" name="recomend_new" value="[{{ f.id }},{{ book['id'] }}]" class="btn btn-primary btn-sm ms-2">
+          <form method="POST" role="form" action="/books/recommend">
+            <button type="submit" name="recommend_new" value="[{{ f.id }},{{ book['id'] }}]" class="btn btn-primary btn-sm ms-2">
               <i class="fa-solid fa-wand-magic-sparkles"></i>
             </button>
           </form>

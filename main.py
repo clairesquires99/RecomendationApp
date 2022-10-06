@@ -17,8 +17,8 @@ def home():
 @main.route('/books')
 @login_required
 def books():
-    # by default show books recomended to user
-    book_ids = db.session.query(BooksRecomended.book_id).filter(BooksRecomended.user_B_id == current_user.id).all()
+    # by default show books recommended to user
+    book_ids = db.session.query(Booksrecommended.book_id).filter(Booksrecommended.user_B_id == current_user.id).all()
     books = []
     if book_ids:
         link = 'https://www.googleapis.com/books/v1/volumes/'
@@ -33,11 +33,11 @@ def books():
 @main.route('/books', methods=['POST'])
 @login_required
 def books_post():
-    if request.form['recomended'] == "to user":
-        book_ids = db.session.query(BooksRecomended.book_id).filter(BooksRecomended.user_B_id == current_user.id).all()
+    if request.form['recommended'] == "to user":
+        book_ids = db.session.query(Booksrecommended.book_id).filter(Booksrecommended.user_B_id == current_user.id).all()
         recs_to_user = True
-    elif request.form['recomended'] == "by user":
-        book_ids = db.session.query(BooksRecomended.book_id).filter(BooksRecomended.user_A_id == current_user.id).all()
+    elif request.form['recommended'] == "by user":
+        book_ids = db.session.query(Booksrecommended.book_id).filter(Booksrecommended.user_A_id == current_user.id).all()
         recs_to_user = False
     books = [] 
     if book_ids:
@@ -65,30 +65,30 @@ def books_search():
             books = data['items']
     return render_template('book_catalogue.html', books=books)
 
-@main.route('/books/recomend', methods=['POST'])
+@main.route('/books/recommend', methods=['POST'])
 @login_required
-def books_recomend():
-    if request.form.get('recomend_new'):
-        string = request.form.get('recomend_new')
+def books_recommend():
+    if request.form.get('recommend_new'):
+        string = request.form.get('recommend_new')
         l = string.strip('][').split(',') # return string to list
         a = current_user.id
         b = int(l[0])
         book = l[1].strip(' ')
-        new = BooksRecomended(user_A_id = a, user_B_id = b, book_id = book)
+        new = Booksrecommended(user_A_id = a, user_B_id = b, book_id = book)
         db.session.add(new)
         db.session.commit()
-        flash('You successfully recomended a new book!', 'success')
+        flash('You successfully recommended a new book!', 'success')
         return redirect(url_for('main.books'))
 
-    elif request.form.get('recomend'):
+    elif request.form.get('recommend'):
         link = 'https://www.googleapis.com/books/v1/volumes/'
-        link += request.form['recomend']
+        link += request.form['recommend']
         response = requests.get(link)
         if response.status_code == 200:
             book = json.loads(response.content)
         followers = db.session.query(Follower.user_A_id).filter(Follower.user_B_id == current_user.id).subquery()
         users = User.query.join(followers, User.id == followers.c.user_A_id)
-        return render_template('recomend.html', book = book, followers = users)
+        return render_template('recommend.html', book = book, followers = users)
 
     else:
         flash('There was a problem with this request.', 'danger')

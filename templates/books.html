@@ -14,11 +14,11 @@
 <form method="POST" role="form" action="/books">
   <div class="d-flex justify-content-center list">
     {% if recs_to_user %}
-    <button type="submit" name="recomended" value="to user" class="btn btn-primary text-wrap me-1 lh-1 active"><small>Recomended to me</small></button>
-    <button type="submit" name="recomended" value="by user" class="btn btn-primary text-wrap ms-1 lh-1"><small>Recomended by me</small></button>
+    <button type="submit" name="recommended" value="to user" class="btn btn-primary text-wrap me-1 lh-1 active"><small>recommended to me</small></button>
+    <button type="submit" name="recommended" value="by user" class="btn btn-primary text-wrap ms-1 lh-1"><small>recommended by me</small></button>
     {% else %}
-    <button type="submit" name="recomended" value="to user" class="btn btn-primary text-wrap me-1 lh-1"><small>Recomended to me</small></button>
-    <button type="submit" name="recomended" value="by user" class="btn btn-primary text-wrap ms-1 lh-1 active"><small>Recomended by me</small></button>
+    <button type="submit" name="recommended" value="to user" class="btn btn-primary text-wrap me-1 lh-1"><small>recommended to me</small></button>
+    <button type="submit" name="recommended" value="by user" class="btn btn-primary text-wrap ms-1 lh-1 active"><small>recommended by me</small></button>
     {% endif %}
   </div>
 </form>
@@ -39,7 +39,7 @@
         {% endif %}
       </nobr></h6>
     
-      <!-- <p class="card-text">Recomended by: Jane Doe</p> -->
+      <!-- <p class="card-text">recommended by: Jane Doe</p> -->
       
     </div>
   </div>
