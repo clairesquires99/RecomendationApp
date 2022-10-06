@@ -9,16 +9,13 @@ a {
   height: 70px;
 }
 
-.navbar .icon {
-  padding: 10px;
-}
-
 .recomendations .icon {
   padding: 0 10px 0 0;
 }
 
 .recomendations .btn {
   margin: 10px 0;
+  width: 200px;
 }
 
 span {
@@ -28,8 +25,4 @@ span {
 
 .nospace {
   font-size: 0px;
-}
-
-.profile a {
-  margin: 5px;
 }

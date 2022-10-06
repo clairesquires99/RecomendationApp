@@ -6,10 +6,46 @@
 <h6 class="text-center">{{ user.firstname }} {{ user.lastname }}</h6>
 <h6 class="text-center">{{ user.email }}</h6>
 
+<form method="POST" role="form" action="/profile">
+  <div class="d-flex justify-content-center mb-2">
+    {% if followers %}
+      <button type="submit" name="show" value="followers" class="btn btn-primary me-1 active">Followers</button>
+      <button type="submit" name="show" value="following" class="btn btn-primary ms-1">Following</button>
+    {% else %}
+      <button type="submit" name="show" value="followers" class="btn btn-primary me-1">Followers</button>
+      <button type="submit" name="show" value="following" class="btn btn-primary ms-1 active">Following</button>
+    {% endif %}
+  </div>
+</form>
 
-<div class="profile d-flex justify-content-center">
-  <a class="btn btn-primary" href="{{ url_for('main.show_followers') }}" role="button">Followers</a>
-  <a class="btn btn-primary" href="{{ url_for('main.show_following') }}" role="button">Following</a>
+{% if not followers %}
+  <form method="POST" role="form" action="/follow_new">
+    <label class="form-label text-muted mb-0" for="email"><small>Follow a new person by entering their email address.</small></label>
+    <div class="form-outline d-flex justify-content-center">
+      <input type="email" name="email" id="email" class="form-control me-1" placeholder="Email address" />
+      <button type="submit" name="follow_new" class="btn btn-success btn-sm">
+        <i class="fa-solid fa-user-plus ms-1 me-1"></i>
+      </button>
+    </div>
+  </form>
+{% endif %}
+
+{% for message in get_flashed_messages(with_categories=True) %}
+<div class="alert alert-{{ message[0] }}" role="alert">
+  {{ message[1] }}
+</div>
+{% endfor %}
+
+
+<div class="d-flex flex-column mt-2">
+  {% for f in follow %}
+    <div class="card w-100 mb-2">
+      <div class="card-body">
+        <h5 class="card-title">{{ f.firstname }} {{ f.lastname }}</h5>
+        <h6 class="card-subtitle mb-2 text-muted"> {{ f.email }} </h6>
+      </div>
+    </div>
+  {% endfor %}
 </div>
 
 {% endblock %}

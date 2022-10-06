@@ -14,11 +14,6 @@ main = Blueprint('main', __name__)
 def home():
     return render_template('home.html')
 
-@main.route('/profile')
-@login_required
-def profile():
-    return render_template('profile.html', user=current_user)
-
 @main.route('/books')
 @login_required
 def books():
@@ -96,6 +91,28 @@ def books_recomend():
     else:
         flash('There was a problem with this request.', 'danger')
         return redirect(url_for('main.books'))
+
+@main.route('/profile')
+@login_required
+def profile():
+    # by default show followers
+    followers = db.session.query(Follower.user_A_id).filter(Follower.user_B_id == current_user.id).subquery()
+    users = User.query.join(followers, User.id == followers.c.user_A_id)
+    return render_template('profile.html', user=current_user, follow=users, followers=True)
+
+@main.route('/profile', methods=['POST'])
+@login_required
+def profile_post():
+    if request.form['show'] == "followers":
+        followers = db.session.query(Follower.user_A_id).filter(Follower.user_B_id == current_user.id).subquery()
+        users = User.query.join(followers, User.id == followers.c.user_A_id)
+        return render_template('profile.html', user=current_user, follow=users, followers=True)
+    elif request.form['show'] == "following":
+        followers = db.session.query(Follower.user_B_id).filter(Follower.user_A_id == current_user.id).subquery()
+        users = User.query.join(followers, User.id == followers.c.user_B_id)
+        return render_template('profile.html', user=current_user, follow=users, followers=False)
+    else:
+        return redirect(url_for('main.profile'))
 
 @main.route('/followers')
 @login_required
