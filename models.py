@@ -14,7 +14,7 @@ class Follower(db.Model):
     user_A_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable = False)
     user_B_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable = False)
 
-class Booksrecommended(db.Model):
+class BooksRecommended(db.Model):
     # A recommended book to B
     # B must follow A
     id = db.Column(db.Integer, primary_key=True)
