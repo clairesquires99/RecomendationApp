@@ -9,14 +9,20 @@
 <form method="POST" role="form" action="/profile">
   <div class="d-flex justify-content-center mb-2">
     {% if followers %}
-      <button type="submit" name="show" value="followers" class="btn btn-primary me-1 active">Followers</button>
-      <button type="submit" name="show" value="following" class="btn btn-primary ms-1">Following</button>
+      <button type="submit" name="show" value="following" class="btn btn-primary m-1">Following</button>
+      <button type="submit" name="show" value="followers" class="btn btn-primary m-1 active">Followers</button>
     {% else %}
-      <button type="submit" name="show" value="followers" class="btn btn-primary me-1">Followers</button>
-      <button type="submit" name="show" value="following" class="btn btn-primary ms-1 active">Following</button>
+    <button type="submit" name="show" value="following" class="btn btn-primary m-1 active">Following</button>  
+    <button type="submit" name="show" value="followers" class="btn btn-primary m-1">Followers</button>
     {% endif %}
   </div>
 </form>
+
+{% for message in get_flashed_messages(with_categories=True) %}
+<div class="alert alert-{{ message[0] }} m-0" role="alert">
+  {{ message[1] }}
+</div>
+{% endfor %}
 
 {% if not followers %}
   <form method="POST" role="form" action="/follow_new">
@@ -29,12 +35,6 @@
     </div>
   </form>
 {% endif %}
-
-{% for message in get_flashed_messages(with_categories=True) %}
-<div class="alert alert-{{ message[0] }}" role="alert">
-  {{ message[1] }}
-</div>
-{% endfor %}
 
 
 <div class="d-flex flex-column mt-2">

@@ -95,10 +95,10 @@ def books_recomend():
 @main.route('/profile')
 @login_required
 def profile():
-    # by default show followers
-    followers = db.session.query(Follower.user_A_id).filter(Follower.user_B_id == current_user.id).subquery()
-    users = User.query.join(followers, User.id == followers.c.user_A_id)
-    return render_template('profile.html', user=current_user, follow=users, followers=True)
+    # by default show following
+    followers = db.session.query(Follower.user_B_id).filter(Follower.user_A_id == current_user.id).subquery()
+    users = User.query.join(followers, User.id == followers.c.user_B_id)
+    return render_template('profile.html', user=current_user, follow=users, followers=False)
 
 @main.route('/profile', methods=['POST'])
 @login_required
@@ -114,20 +114,6 @@ def profile_post():
     else:
         return redirect(url_for('main.profile'))
 
-@main.route('/followers')
-@login_required
-def show_followers():
-    followers = db.session.query(Follower.user_A_id).filter(Follower.user_B_id == current_user.id).subquery()
-    users = User.query.join(followers, User.id == followers.c.user_A_id)
-    return render_template('followers.html', followers=users)
-
-@main.route('/following')
-@login_required
-def show_following():
-    followers = db.session.query(Follower.user_B_id).filter(Follower.user_A_id == current_user.id).subquery()
-    users = User.query.join(followers, User.id == followers.c.user_B_id)
-    return render_template('following.html', following=users)
-
 @main.route('/follow_new', methods=['POST'])
 @login_required
 def follow_new():
@@ -136,7 +122,7 @@ def follow_new():
     user_exists = User.query.filter_by(email = email).first()
     if not user_exists:
         flash('This email address is not registered.', 'danger')
-        return redirect(url_for('main.show_following'))
+        return redirect(url_for('main.profile'))
 
     # Check if already following exists
     followers = db.session.query(Follower.user_B_id).filter(Follower.user_A_id == current_user.id).subquery()
@@ -151,6 +137,6 @@ def follow_new():
         db.session.commit()
         flash('New follower successfully added!', 'success')
 
-    return redirect(url_for('main.show_following'))
+    return redirect(url_for('main.profile'))
 
 
