@@ -4,8 +4,7 @@ import json
 import requests
 
 from .models import *
-from . import db
-from . import creds
+from . import db, creds
 
 main = Blueprint('main', __name__)
 
@@ -34,10 +33,10 @@ def books():
 @login_required
 def books_post():
     if request.form['recommended'] == "to user":
-        book_ids = db.session.query(Booksrecommended.book_id).filter(Booksrecommended.user_B_id == current_user.id).all()
+        book_ids = db.session.query(BooksRecommended.book_id).filter(BooksRecommended.user_B_id == current_user.id).all()
         recs_to_user = True
     elif request.form['recommended'] == "by user":
-        book_ids = db.session.query(Booksrecommended.book_id).filter(Booksrecommended.user_A_id == current_user.id).all()
+        book_ids = db.session.query(BooksRecommended.book_id).filter(BooksRecommended.user_A_id == current_user.id).all()
         recs_to_user = False
     books = [] 
     if book_ids:
@@ -120,17 +119,22 @@ def profile_post():
 @login_required
 def follow_new():
     email = request.form.get('email')
+    
+    # Check email not self
+    if current_user.email == email:
+        flash('You cannot follow yourself.', 'danger')
+        return redirect(url_for('main.profile'))
+
     # Check if email address is registered
     user_exists = User.query.filter_by(email = email).first()
     if not user_exists:
         flash('This email address is not registered.', 'danger')
         return redirect(url_for('main.profile'))
 
-    # Check if already following exists
+    # Check if already following
     followers = db.session.query(Follower.user_B_id).filter(Follower.user_A_id == current_user.id).subquery()
     user_followers = User.query.join(followers, User.id == followers.c.user_B_id).subquery()
     user = User.query.filter(user_followers.c.email == email).first()
-        
     if user:
         flash('You are already following this person.', 'danger')
     else:
