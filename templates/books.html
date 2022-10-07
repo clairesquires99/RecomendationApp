@@ -14,11 +14,13 @@
 <form method="POST" role="form" action="/books">
   <div class="d-flex justify-content-center list">
     {% if recs_to_user %}
-    <button type="submit" name="recommended" value="to user" class="btn btn-primary text-wrap me-1 lh-1 active"><small>recommended to me</small></button>
-    <button type="submit" name="recommended" value="by user" class="btn btn-primary text-wrap ms-1 lh-1"><small>recommended by me</small></button>
+      <button type="submit" name="recommended" value="to user" class="btn btn-primary text-wrap me-1 lh-1 active"><small>recommended to me</small></button>
+      <button type="submit" name="recommended" value="by user" class="btn btn-primary text-wrap ms-1 lh-1"><small>recommended by me</small></button>
+      {% set word = 'by' %}
     {% else %}
-    <button type="submit" name="recommended" value="to user" class="btn btn-primary text-wrap me-1 lh-1"><small>recommended to me</small></button>
-    <button type="submit" name="recommended" value="by user" class="btn btn-primary text-wrap ms-1 lh-1 active"><small>recommended by me</small></button>
+      <button type="submit" name="recommended" value="to user" class="btn btn-primary text-wrap me-1 lh-1"><small>recommended to me</small></button>
+      <button type="submit" name="recommended" value="by user" class="btn btn-primary text-wrap ms-1 lh-1 active"><small>recommended by me</small></button>
+      {% set word = 'to' %}
     {% endif %}
   </div>
 </form>
@@ -38,9 +40,12 @@
           {% endfor %}
         {% endif %}
       </nobr></h6>
-    
-      <!-- <p class="card-text">recommended by: Jane Doe</p> -->
       
+      <div class="d-flex text-muted">
+        <i class="fa-solid fa-wand-magic-sparkles"></i>&nbsp;
+        <small><p class="m-0 lh-1">{{word}} {{book['fname']}} {{book['lname']}} on {{book['date'].strftime("%d-%b-%y")}}</p></small>
+      </div>
+
     </div>
   </div>
   {% endfor %}

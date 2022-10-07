@@ -1,5 +1,6 @@
 from flask_login import UserMixin
 from .extentions import db
+import datetime
 
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -21,3 +22,4 @@ class BooksRecommended(db.Model):
     user_A_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable = False)
     user_B_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable = False)
     book_id = db.Column(db.String(12), nullable = False)
+    date = db.Column(db.DateTime, default=datetime.datetime.utcnow)

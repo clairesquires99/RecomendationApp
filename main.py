@@ -4,7 +4,7 @@ import json
 import requests
 
 from .models import *
-from . import db, creds
+from . import db, creds, utils
 
 main = Blueprint('main', __name__)
 
@@ -17,35 +17,18 @@ def home():
 @login_required
 def books():
     # by default show books recommended to user
-    book_ids = db.session.query(Booksrecommended.book_id).filter(Booksrecommended.user_B_id == current_user.id).all()
-    books = []
-    if book_ids:
-        link = 'https://www.googleapis.com/books/v1/volumes/'
-        for b in book_ids:
-            response = requests.get(link + b.book_id)
-            if response.status_code == 200:
-                data = json.loads(response.content)
-                books.append(data)
-
+    books = utils.books_rec_to_user()
     return render_template('books.html', books=books, recs_to_user=True)
 
 @main.route('/books', methods=['POST'])
 @login_required
 def books_post():
     if request.form['recommended'] == "to user":
-        book_ids = db.session.query(BooksRecommended.book_id).filter(BooksRecommended.user_B_id == current_user.id).all()
+        books = utils.books_rec_to_user()
         recs_to_user = True
     elif request.form['recommended'] == "by user":
-        book_ids = db.session.query(BooksRecommended.book_id).filter(BooksRecommended.user_A_id == current_user.id).all()
+        books = utils.books_rec_by_user()
         recs_to_user = False
-    books = [] 
-    if book_ids:
-        link = 'https://www.googleapis.com/books/v1/volumes/'
-        for b in book_ids:
-            response = requests.get(link + b.book_id)
-            if response.status_code == 200:
-                data = json.loads(response.content)
-                books.append(data)
     return render_template('books.html', books=books, recs_to_user=recs_to_user)
 
 @main.route('/books/catalogue')
@@ -73,7 +56,7 @@ def books_recommend():
         a = current_user.id
         b = int(l[0])
         book = l[1].strip(' ')
-        new = Booksrecommended(user_A_id = a, user_B_id = b, book_id = book)
+        new = BooksRecommended(user_A_id = a, user_B_id = b, book_id = book)
         db.session.add(new)
         db.session.commit()
         flash('You successfully recommended a new book!', 'success')
