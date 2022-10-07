@@ -43,3 +43,14 @@ def books_rec_by_user():
                 books.append(data)
     return books
 
+# return user's followers
+def followers():
+    followers = db.session.query(Follower.user_A_id).filter(Follower.user_B_id == current_user.id).subquery()
+    users = User.query.join(followers, User.id == followers.c.user_A_id)
+    return users
+
+# return user's following
+def following():
+    followers = db.session.query(Follower.user_B_id).filter(Follower.user_A_id == current_user.id).subquery()
+    users = User.query.join(followers, User.id == followers.c.user_B_id)
+    return users

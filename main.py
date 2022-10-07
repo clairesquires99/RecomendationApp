@@ -80,20 +80,17 @@ def books_recommend():
 @login_required
 def profile():
     # by default show following
-    followers = db.session.query(Follower.user_B_id).filter(Follower.user_A_id == current_user.id).subquery()
-    users = User.query.join(followers, User.id == followers.c.user_B_id)
+    users = utils.following()
     return render_template('profile.html', user=current_user, follow=users, followers=False)
 
 @main.route('/profile', methods=['POST'])
 @login_required
 def profile_post():
     if request.form['show'] == "followers":
-        followers = db.session.query(Follower.user_A_id).filter(Follower.user_B_id == current_user.id).subquery()
-        users = User.query.join(followers, User.id == followers.c.user_A_id)
+        users = utils.followers()
         return render_template('profile.html', user=current_user, follow=users, followers=True)
     elif request.form['show'] == "following":
-        followers = db.session.query(Follower.user_B_id).filter(Follower.user_A_id == current_user.id).subquery()
-        users = User.query.join(followers, User.id == followers.c.user_B_id)
+        users = utils.following()
         return render_template('profile.html', user=current_user, follow=users, followers=False)
     else:
         return redirect(url_for('main.profile'))
