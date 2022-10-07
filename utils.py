@@ -1,15 +1,18 @@
 from flask_login import current_user
+from sqlalchemy import desc
 import requests
 import json
 
 from .models import *
-from . import db, creds
+from . import db
+
 
 # return books recommended to user
 def books_rec_to_user():
     results = db.session.query(BooksRecommended)\
         .with_entities(BooksRecommended.book_id, BooksRecommended.user_A_id, BooksRecommended.date)\
-        .filter(BooksRecommended.user_B_id == current_user.id).all()
+        .filter(BooksRecommended.user_B_id == current_user.id)\
+        .order_by(desc(BooksRecommended.date)).all()
     books = []
     if results:
         link = 'https://www.googleapis.com/books/v1/volumes/'
@@ -28,7 +31,8 @@ def books_rec_to_user():
 def books_rec_by_user():
     results = db.session.query(BooksRecommended)\
         .with_entities(BooksRecommended.book_id, BooksRecommended.user_B_id, BooksRecommended.date)\
-        .filter(BooksRecommended.user_A_id == current_user.id).all()
+        .filter(BooksRecommended.user_A_id == current_user.id)\
+        .order_by(desc(BooksRecommended.date)).all()
     books = []
     if results:
         link = 'https://www.googleapis.com/books/v1/volumes/'
@@ -46,11 +50,11 @@ def books_rec_by_user():
 # return user's followers
 def followers():
     followers = db.session.query(Follower.user_A_id).filter(Follower.user_B_id == current_user.id).subquery()
-    users = User.query.join(followers, User.id == followers.c.user_A_id)
+    users = User.query.join(followers, User.id == followers.c.user_A_id).order_by(User.firstname)
     return users
 
 # return user's following
 def following():
     followers = db.session.query(Follower.user_B_id).filter(Follower.user_A_id == current_user.id).subquery()
-    users = User.query.join(followers, User.id == followers.c.user_B_id)
+    users = User.query.join(followers, User.id == followers.c.user_B_id).order_by(User.firstname)
     return users
