@@ -4,13 +4,6 @@
 {% block content %}
 <h1 class="text-center">Books</h1>
 
-
-{% for message in get_flashed_messages(with_categories=True) %}
-  <div class="alert alert-{{ message[0] }}" role="alert">
-    {{ message[1] }}
-  </div>
-{% endfor %}
-
 <form method="POST" role="form" action="/books">
   <div class="d-flex justify-content-center list">
     {% if recs_to_user %}
@@ -24,6 +17,12 @@
     {% endif %}
   </div>
 </form>
+
+{% for message in get_flashed_messages(with_categories=True) %}
+  <div class="alert alert-{{ message[0] }} mt-1" role="alert">
+    {{ message[1] }}
+  </div>
+{% endfor %}
 
 <div class="d-flex flex-column mt-3">
   {% for book in books %}

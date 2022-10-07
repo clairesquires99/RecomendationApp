@@ -7,7 +7,7 @@
 <h6 class="text-center">{{ user.email }}</h6>
 
 <form method="POST" role="form" action="/profile">
-  <div class="d-flex justify-content-center mb-2 list">
+  <div class="d-flex justify-content-center mb-1 list">
     {% if followers %}
       <button type="submit" name="show" value="following" class="btn btn-primary m-1">Following</button>
       <button type="submit" name="show" value="followers" class="btn btn-primary m-1 active">Followers</button>
@@ -17,12 +17,6 @@
     {% endif %}
   </div>
 </form>
-
-{% for message in get_flashed_messages(with_categories=True) %}
-<div class="alert alert-{{ message[0] }} m-0" role="alert">
-  {{ message[1] }}
-</div>
-{% endfor %}
 
 {% if not followers %}
   <form method="POST" role="form" action="/follow_new">
@@ -36,8 +30,14 @@
   </form>
 {% endif %}
 
+{% for message in get_flashed_messages(with_categories=True) %}
+<div class="alert alert-{{ message[0] }} mt-1" role="alert">
+  {{ message[1] }}
+</div>
+{% endfor %}
 
-<div class="d-flex flex-column mt-2">
+
+<div class="d-flex flex-column mt-4">
   {% for f in follow %}
     <div class="card w-100 mb-2">
       <div class="card-body">

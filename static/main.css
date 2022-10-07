@@ -1,8 +1,65 @@
 /* Custom styling */
 
+@import url("https://fonts.googleapis.com/css2?family=Fredoka+One&family=Source+Sans+Pro:ital,wght@0,400;0,600;1,200&display=swap");
+
+* {
+  font-family: "Source Sans Pro", sans-serif;
+  font-weight: 400;
+}
+
+#recommenda {
+  font-family: "Fredoka One", sans-serif;
+  font-style: normal;
+  font-weight: normal;
+  letter-spacing: 5px;
+  color: #ffffff;
+  text-transform: lowercase;
+}
+
+h1 {
+  font-style: normal;
+  font-weight: 600;
+  letter-spacing: 5px;
+  line-height: normal;
+  text-transform: lowercase;
+  margin-bottom: 1rem;
+}
+
 a {
   color: inherit;
   text-decoration: none;
+}
+
+.card-header {
+  background-color: #0087df;
+}
+
+.btn {
+  border: none;
+  text-transform: uppercase;
+}
+
+.btn-primary {
+  background-color: #0087df;
+}
+
+.btn-primary.disabled {
+  background-color: #0087df;
+}
+
+.btn-primary.active,
+.btn-primary:active,
+.btn-primary:hover {
+  background-color: #0067ab;
+}
+
+.btn-success {
+  background-color: #5db844;
+}
+
+a.btn-lg {
+  font-size: 1rem;
+  text-align: center;
 }
 
 .navbar {
@@ -39,4 +96,14 @@ span {
 input.end {
   border-bottom-right-radius: 0;
   border-top-right-radius: 0;
+}
+
+.alert-success {
+  background-color: rgba(93, 184, 68, 0.4);
+  border: none;
+}
+
+.alert-danger {
+  background-color: rgba(171, 0, 0, 0.4);
+  border: none;
 }

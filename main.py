@@ -59,7 +59,7 @@ def books_recommend():
         db.session.add(new)
         db.session.commit()
         flash('You successfully recommended a new book!', 'success')
-        return redirect(url_for('main.books'))
+        return redirect(url_for('main.books_post'))
 
     elif request.form.get('recommend'):
         link = 'https://www.googleapis.com/books/v1/volumes/'
