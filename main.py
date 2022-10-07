@@ -1,10 +1,9 @@
+import os, json, requests
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import login_required, current_user
-import json
-import requests
 
 from .models import *
-from . import db, creds, utils
+from . import db, utils
 
 main = Blueprint('main', __name__)
 
@@ -40,7 +39,7 @@ def books_search():
         link = 'https://www.googleapis.com/books/v1/volumes?q='
         link += search_word
         link += '&key='
-        link += creds.google_books_api
+        link += os.environ.get("GOOGLE_BOOKS_API")
         response = requests.get(link)
         if response.status_code == 200:
             data = json.loads(response.content)

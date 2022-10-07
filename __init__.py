@@ -1,13 +1,15 @@
+from os import environ, path
+from dotenv import load_dotenv
 from flask import Flask
 from flask_login import LoginManager
 from .extentions import db
-# from .creds import creds NOT WORKING
-
 
 
 def create_app():
     app = Flask(__name__)
-    app.config['SECRET_KEY'] = 'temp_secret_key'
+    basedir = path.abspath(path.dirname(__file__))
+    load_dotenv(path.join(basedir, '.env'))
+    app.config['SECRET_KEY'] = environ.get("SECRET_KEY")
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
