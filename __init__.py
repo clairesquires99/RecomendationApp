@@ -8,7 +8,7 @@ from .extentions import db
 def create_app():
     app = Flask(__name__)
     basedir = path.abspath(path.dirname(__file__))
-    load_dotenv(path.join(basedir, '.env'))
+    load_dotenv(path.join(basedir, '..', '.env'))
     app.config['SECRET_KEY'] = environ.get("SECRET_KEY")
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
