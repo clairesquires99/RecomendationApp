@@ -7,6 +7,10 @@
   font-weight: 400;
 }
 
+.login.card {
+  width: 300px;
+}
+
 #recommenda {
   font-family: "Fredoka One", sans-serif;
   font-style: normal;
@@ -14,6 +18,12 @@
   letter-spacing: 5px;
   color: #ffffff;
   text-transform: lowercase;
+  font-size: 1.7rem;
+}
+
+#recommenda i {
+  padding-left: 10px;
+  font-size: 1.2rem;
 }
 
 h1 {
