@@ -1,7 +1,7 @@
 import os, json, requests
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import login_required, current_user
-import git
+import git, yaml
 
 from .models import *
 from . import db, utils
@@ -22,69 +22,6 @@ def webhook():
 @login_required
 def home():
     return render_template('home.html')
-
-@main.route('/books')
-@login_required
-def books():
-    # by default show books recommended to user
-    books = utils.books_rec_to_user()
-    return render_template('books.html', books=books, recs_to_user=True)
-
-@main.route('/books', methods=['POST'])
-@login_required
-def books_post():
-    if request.form['recommended'] == "to user":
-        books = utils.books_rec_to_user()
-        recs_to_user = True
-    elif request.form['recommended'] == "by user":
-        books = utils.books_rec_by_user()
-        recs_to_user = False
-    return render_template('books.html', books=books, recs_to_user=recs_to_user)
-
-@main.route('/books/catalogue')
-@login_required
-def books_search():
-    books = []
-    if 'book' in request.args:
-        search_word = request.args.get('book')
-        link = 'https://www.googleapis.com/books/v1/volumes?q='
-        link += search_word
-        link += '&key='
-        link += os.environ.get("GOOGLE_BOOKS_API")
-        response = requests.get(link)
-        if response.status_code == 200:
-            data = json.loads(response.content)
-            books = data['items']
-    return render_template('book_catalogue.html', books=books)
-
-@main.route('/books/recommend', methods=['POST'])
-@login_required
-def books_recommend():
-    if request.form.get('recommend_new'):
-        string = request.form.get('recommend_new')
-        l = string.strip('][').split(',') # return string to list
-        a = current_user.id
-        b = int(l[0])
-        book = l[1].strip(' ')
-        new = BooksRecommended(user_A_id = a, user_B_id = b, book_id = book)
-        db.session.add(new)
-        db.session.commit()
-        flash('You successfully recommended a new book!', 'success')
-        return redirect(url_for('main.books_post'))
-
-    elif request.form.get('recommend'):
-        link = 'https://www.googleapis.com/books/v1/volumes/'
-        link += request.form['recommend']
-        response = requests.get(link)
-        if response.status_code == 200:
-            book = json.loads(response.content)
-        followers = db.session.query(Follower.user_A_id).filter(Follower.user_B_id == current_user.id).subquery()
-        users = User.query.join(followers, User.id == followers.c.user_A_id)
-        return render_template('recommend.html', book = book, followers = users)
-
-    else:
-        flash('There was a problem with this request.', 'danger')
-        return redirect(url_for('main.books'))
 
 @main.route('/profile')
 @login_required
@@ -136,3 +73,110 @@ def follow_new():
     return redirect(url_for('main.profile'))
 
 
+# MEDIA
+@main.route('/show/<item_type>')
+@login_required
+def show(item_type):
+    # by default show items recommended to user
+    items = []
+    if item_type == 'books':
+        results = utils.books_rec_to_user()
+        items = utils.books_complete(results)
+    elif item_type == 'films':
+        results = utils.films_rec_to_user()
+        for item in results:
+            items.append(utils.name_to_title(item))
+        
+    return render_template('show.html', item_type=item_type, items=items, recs_to_user=True)
+
+@main.route('/show/<item_type>', methods=['POST'])
+@login_required
+def show_post(item_type):
+    items = []
+    if request.form['recommended'] == "to user":
+        if item_type == 'books':
+            results = utils.books_rec_to_user()
+            items = utils.books_complete(results)
+        elif item_type == 'films':
+            results = utils.films_rec_to_user()
+            for item in results:
+                items.append(utils.name_to_title(item))
+        recs_to_user = True
+    elif request.form['recommended'] == "by user":
+        if item_type == 'books':
+            results = utils.books_rec_by_user()
+            items = utils.books_complete(results)
+        elif item_type == 'films':
+            results = utils.films_rec_by_user()
+            for item in results:
+                items.append(utils.name_to_title(item))
+        recs_to_user = False
+    return render_template('show.html', item_type=item_type, items=items, recs_to_user=recs_to_user)
+
+@main.route('/search/<item_type>')
+@login_required
+def search(item_type):
+    items = []
+    if 'books' in request.args:
+        search_word = request.args.get('books')
+        link = f'https://www.googleapis.com/books/v1/volumes?q={search_word}&key='
+        link += os.environ.get("GOOGLE_BOOKS_API")
+        response = requests.get(link)
+        if response.status_code == 200:
+            data = json.loads(response.content)
+            items = data['items']
+            items = utils.books_complete(items)
+    elif 'films' in request.args:
+        search_word = request.args.get('films')
+        link = 'https://api.themoviedb.org/3/search/multi?api_key='
+        link += os.environ.get("FILM_API")
+        link += f'&query={search_word}'
+        response = requests.get(link)
+        if response.status_code == 200:
+            data = json.loads(response.content)
+        for item in data['results']:
+            item = utils.name_to_title(item)
+            items.append(item)
+
+    return render_template('search.html', item_type=item_type, items=items)
+
+# PICKUP: fix this function and the one below. ensure functionaly of both books and films working from end-to-end
+
+@main.route('/recommend/<item_type>', methods=['POST'])
+@login_required
+def recommend(item_type):
+    if request.form.get('recommend'):
+        item = request.form['recommend']
+        item = item.replace('"', '\\"')
+        item = item.replace("'", '"')
+        item = yaml.safe_load(item)
+        
+        if item_type == 'books':
+            item['title'] = item['volumeInfo']['title']
+        elif item_type == 'films':
+            item = utils.name_to_title(item)
+
+        followers = db.session.query(Follower.user_A_id).filter(Follower.user_B_id == current_user.id).subquery()
+        users = User.query.join(followers, User.id == followers.c.user_A_id)
+        return render_template('recommend.html', item_type=item_type, item=item, followers=users)
+
+    elif request.form.get('recommend_new'):
+        string = request.form.get('recommend_new')
+        l = string.strip('][').split(',', 1) # return string to list
+        user_a = current_user.id
+        user_b = int(l[0])
+        item = yaml.safe_load(l[1])
+        if item_type == 'books':
+            id = item['id']
+            new = BooksRecommended(user_A_id=user_a, user_B_id=user_b, book_id=id)
+        elif item_type == 'films':
+            id = f"{item['media_type']}/{item['id']}"
+            new = FilmsRecommended(user_A_id=user_a, user_B_id=user_b, film_id=id)
+        db.session.add(new)
+        db.session.commit()
+        flash(f'You successfully recommended a new {item_type}!', 'success')
+        return redirect(url_for('main.show_post', item_type=item_type))
+
+    else:
+        flash('There was a problem with this request.', 'danger')
+        return redirect(url_for('main.home'))

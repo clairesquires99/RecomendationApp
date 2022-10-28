@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% block title %} Search {% endblock %}
+
+{% block content %}
+<h1 class="text-center">Recommend a {{ item_type }}</h1>
+
+<p class="text-center">Search for any {{ item_type }}, and then recommend it to anyone you are following.</p>
+
+<form class="mb-4">
+  <div class="form-outline d-flex">
+    <input type="text" name="{{ item_type }}" id="{{ item_type }}" class="form-control end" placeholder="Search" />
+    <button type="submit" class="btn btn-primary end">
+      <i class="fas fa-search"></i>
+    </button>
+  </div>
+</form>
+
+<div class="d-flex flex-column">
+  {% for item in items %}
+  <div class="card w-100 mb-2">
+    <div class="d-flex">
+      <!-- Image -->
+      {% if item_type == 'books' %}
+        {% set src = item['volumeInfo']['imageLinks']['smallThumbnail'] %}
+      {% elif item_type == 'films' %}
+        {% set src = 'https://image.tmdb.org/t/p/w200' ~ item['poster_path'] %}
+      {% endif %}
+      <div>
+        <img src="{{ src }}" class="img-fluid rounded-start" onerror="this.src='/static/default.png'" alt="image of media item">
+      </div>
+
+      <!-- Content -->
+      <div class="card-body flex-fill d-flex justify-content-between p-2">
+        {% if item_type == 'books' %}
+        <div>
+          <h5 class="card-title">{{item['volumeInfo']['title']}}</h5>
+          <h6 class="card-subtitle mb-2 text-muted nospace">
+            {% set authors = item['volumeInfo']['authors'] %}
+            {% if authors %}
+              <span>by&nbsp;</span>
+              {% if authors|length == 1 %}
+                <span>{{authors[0]}}</span>
+              {% else %}
+                {% for author in authors[:-1] %}
+                  <span>{{author}},&nbsp;</span>
+                {% endfor %}
+                <span>{{authors[-1]}}</span>
+              {% endif %}
+            {% endif %}
+          </h6>
+        </div>
+
+        {% elif item_type == 'films' %}
+        <div>
+          <h5 class="card-title">{{ item['title'] }}</h5>
+        </div>
+
+        {% endif %}
+
+        <!-- Recommend button -->
+        <div>
+          <form method="POST" role="form" action="/recommend/{{ item_type }}">
+            <button type="submit" name="recommend" value="{{ item }}" class="btn btn-primary btn-sm ms-2">
+              <i class="fa-solid fa-wand-magic-sparkles"></i>
+            </button>
+          </form>
+        </div>
+
+      </div>
+
+    </div>
+      
+  </div>
+  {% endfor %}
+</div>
+
+{% endblock %}

@@ -117,3 +117,7 @@ input.end {
   background-color: rgba(171, 0, 0, 0.4);
   border: none;
 }
+
+.card img {
+  width: 100px;
+}

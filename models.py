@@ -23,3 +23,12 @@ class BooksRecommended(db.Model):
     user_B_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable = False)
     book_id = db.Column(db.String(12), nullable = False)
     date = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+
+class FilmsRecommended(db.Model):
+    # A recommended film to B
+    # B must follow A
+    id = db.Column(db.Integer, primary_key=True)
+    user_A_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable = False)
+    user_B_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable = False)
+    film_id = db.Column(db.String(12), nullable = False)
+    date = db.Column(db.DateTime, default=datetime.datetime.utcnow)
