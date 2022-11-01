@@ -44,27 +44,25 @@ a {
   background-color: #0087df;
 }
 
-.btn {
-  border: none;
-  text-transform: uppercase;
+.btn.toggle {
+  border-radius: 30px;
+  padding: 10px;
+  letter-spacing: 2px;
+  text-transform: lowercase;
 }
 
 .btn-primary {
   background-color: #0087df;
+  border-color: #0087df;
 }
 
 .btn-primary.disabled {
   background-color: #0087df;
 }
 
-.btn-primary.active,
-.btn-primary:active,
-.btn-primary:hover {
-  background-color: #0067ab;
-}
-
 .btn-success {
   background-color: #5db844;
+  border-color: #5db844;
 }
 
 a.btn-lg {
@@ -81,12 +79,13 @@ a.btn-lg {
 }
 
 .recommendations .btn {
+  text-transform: uppercase;
   margin: 10px 0;
   width: 200px;
 }
 
 .list .btn {
-  width: 120px;
+  width: 150px;
 }
 
 span {
@@ -120,4 +119,13 @@ input.end {
 
 .card img {
   width: 100px;
+}
+
+.container.max-500 {
+  max-width: 500px;
+  padding: 0;
+}
+
+.fa-plus {
+  font-size: 25px;
 }

@@ -1,7 +1,13 @@
 {% extends 'base.html' %}
-{% block title %} {{ item_type }} {% endblock %}
+{% block title %} {{ item_type|capitalize }} {% endblock %}
 
 {% block content %}
+
+{% if recs_to_user %}
+  {% set word = 'by' %}
+{% else %}
+  {% set word = 'to' %}
+{% endif %}
 
 <h1 class="text-center">{{ item_type }}</h1>
 
@@ -9,20 +15,24 @@
 <form method="POST" role="form" action="/show/{{ item_type }}" > 
   <div class="d-flex justify-content-center list">
     {% if recs_to_user %}
-      <button type="submit" name="recommended" value="to user" class="btn btn-primary text-wrap me-1 lh-1 active"><small>recommended to me</small></button>
-      <button type="submit" name="recommended" value="by user" class="btn btn-primary text-wrap ms-1 lh-1"><small>recommended by me</small></button>
-      {% set word = 'by' %}
+      <button type="submit" name="recommended" value="to user" class="btn toggle btn-primary text-wrap me-1 lh-1"><small>recommended to me</small></button>
+      <button type="submit" name="recommended" value="by user" class="btn toggle btn-outline-secondary text-wrap ms-1 lh-1"><small>recommended by me</small></button>
     {% else %}
-      <button type="submit" name="recommended" value="to user" class="btn btn-primary text-wrap me-1 lh-1"><small>recommended to me</small></button>
-      <button type="submit" name="recommended" value="by user" class="btn btn-primary text-wrap ms-1 lh-1 active"><small>recommended by me</small></button>
-      {% set word = 'to' %}
+      <button type="submit" name="recommended" value="to user" class="btn toggle btn-outline-secondary text-wrap me-1 lh-1"><small>recommended to me</small></button>
+      <button type="submit" name="recommended" value="by user" class="btn toggle btn-primary text-wrap ms-1 lh-1"><small>recommended by me</small></button>
     {% endif %}
-    <a href="{{ url_for('main.search', item_type=item_type) }}" class="ms-2 lh-1"><small>recommend new item</small></a>
   </div>
 </form>
 
+{% if not recs_to_user %}
+<div class="mt-3 d-flex justify-content-center">
+  <i class="fa-solid fa-plus d-flex align-items-center"></i>
+  <a href="{{ url_for('main.search', item_type=item_type) }}" class="ms-2 lh-1"><small>recommend<br>new item</small></a>
+</div>
+{% endif %}
+
 {% for message in get_flashed_messages(with_categories=True) %}
-  <div class="alert alert-{{ message[0] }} mt-1" role="alert">
+  <div class="alert alert-{{ message[0] }} mt-3" role="alert">
     {{ message[1] }}
   </div>
 {% endfor %}
@@ -40,7 +50,7 @@
         {% endif %}
 
         <div>
-          <img src="{{ src }}" class="img-fluid rounded-start" onerror="this.src='/static/default.png'" alt="image of media item">
+          <img src="{{ src }}" class="rounded-start" onerror="this.src='/static/default.png'" alt="image of media item">
         </div>
 
         <!-- Content -->
@@ -77,3 +87,4 @@
 </div>
 
 {% endblock %}
+

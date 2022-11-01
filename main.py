@@ -1,7 +1,7 @@
 import os, json, requests
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import login_required, current_user
-import git, yaml
+import yaml
 
 from .models import *
 from . import db, utils
@@ -23,24 +23,23 @@ def webhook():
 def home():
     return render_template('home.html')
 
-@main.route('/profile')
+
+@main.route('/profile', methods=['GET', 'POST'])
 @login_required
 def profile():
-    # by default show following
-    users = utils.following()
-    return render_template('profile.html', user=current_user, follow=users, followers=False)
-
-@main.route('/profile', methods=['POST'])
-@login_required
-def profile_post():
-    if request.form['show'] == "followers":
-        users = utils.followers()
-        return render_template('profile.html', user=current_user, follow=users, followers=True)
-    elif request.form['show'] == "following":
+    if request.method == 'GET':
+        # by default show following
         users = utils.following()
         return render_template('profile.html', user=current_user, follow=users, followers=False)
     else:
-        return redirect(url_for('main.profile'))
+        if request.form['show'] == "followers":
+            users = utils.followers()
+            return render_template('profile.html', user=current_user, follow=users, followers=True)
+        elif request.form['show'] == "following":
+            users = utils.following()
+            return render_template('profile.html', user=current_user, follow=users, followers=False)
+        else:
+            return redirect(url_for('main.profile'))
 
 @main.route('/follow_new', methods=['POST'])
 @login_required
@@ -74,26 +73,12 @@ def follow_new():
 
 
 # MEDIA
-@main.route('/show/<item_type>')
+@main.route('/show/<item_type>', methods=['GET', 'POST'])
 @login_required
 def show(item_type):
-    # by default show items recommended to user
-    items = []
-    if item_type == 'books':
-        results = utils.books_rec_to_user()
-        items = utils.books_complete(results)
-    elif item_type == 'films':
-        results = utils.films_rec_to_user()
-        for item in results:
-            items.append(utils.name_to_title(item))
-        
-    return render_template('show.html', item_type=item_type, items=items, recs_to_user=True)
-
-@main.route('/show/<item_type>', methods=['POST'])
-@login_required
-def show_post(item_type):
-    items = []
-    if request.form['recommended'] == "to user":
+    items = []        
+    if request.method == 'GET':
+        recs_to_user = True
         if item_type == 'books':
             results = utils.books_rec_to_user()
             items = utils.books_complete(results)
@@ -101,22 +86,33 @@ def show_post(item_type):
             results = utils.films_rec_to_user()
             for item in results:
                 items.append(utils.name_to_title(item))
-        recs_to_user = True
-    elif request.form['recommended'] == "by user":
-        if item_type == 'books':
-            results = utils.books_rec_by_user()
-            items = utils.books_complete(results)
-        elif item_type == 'films':
-            results = utils.films_rec_by_user()
-            for item in results:
-                items.append(utils.name_to_title(item))
-        recs_to_user = False
+    else:
+        print('FORM REQUEST show (post) EXECUTED')
+        if request.form['recommended'] == "to user":
+            if item_type == 'books':
+                results = utils.books_rec_to_user()
+                items = utils.books_complete(results)
+            elif item_type == 'films':
+                results = utils.films_rec_to_user()
+                for item in results:
+                    items.append(utils.name_to_title(item))
+            recs_to_user = True
+        elif request.form['recommended'] == "by user":
+            if item_type == 'books':
+                results = utils.books_rec_by_user()
+                items = utils.books_complete(results)
+            elif item_type == 'films':
+                results = utils.films_rec_by_user()
+                for item in results:
+                    items.append(utils.name_to_title(item))
+            recs_to_user = False
     return render_template('show.html', item_type=item_type, items=items, recs_to_user=recs_to_user)
 
 @main.route('/search/<item_type>')
 @login_required
 def search(item_type):
     items = []
+    data = None # default
     if 'books' in request.args:
         search_word = request.args.get('books')
         link = f'https://www.googleapis.com/books/v1/volumes?q={search_word}&key='
@@ -124,8 +120,9 @@ def search(item_type):
         response = requests.get(link)
         if response.status_code == 200:
             data = json.loads(response.content)
-            items = data['items']
-            items = utils.books_complete(items)
+            if data and int(data['totalItems']) > 0:
+                items = data['items']
+                items = utils.books_complete(items)
     elif 'films' in request.args:
         search_word = request.args.get('films')
         link = 'https://api.themoviedb.org/3/search/multi?api_key='
@@ -134,21 +131,22 @@ def search(item_type):
         response = requests.get(link)
         if response.status_code == 200:
             data = json.loads(response.content)
-        for item in data['results']:
-            item = utils.name_to_title(item)
-            items.append(item)
+        if data:
+            for item in data['results']:
+                item = utils.name_to_title(item)
+                items.append(item)
+    if request.args and (len(items) == 0):
+        flash(f"We coulnd't find any results for your search, sorry!", 'success')
 
     return render_template('search.html', item_type=item_type, items=items)
-
-# PICKUP: fix this function and the one below. ensure functionaly of both books and films working from end-to-end
 
 @main.route('/recommend/<item_type>', methods=['POST'])
 @login_required
 def recommend(item_type):
     if request.form.get('recommend'):
         item = request.form['recommend']
-        item = item.replace('"', '\\"')
-        item = item.replace("'", '"')
+        # item = item.replace('"', '\\"')
+        # item = item.replace("'", '"')
         item = yaml.safe_load(item)
         
         if item_type == 'books':
@@ -158,6 +156,7 @@ def recommend(item_type):
 
         followers = db.session.query(Follower.user_A_id).filter(Follower.user_B_id == current_user.id).subquery()
         users = User.query.join(followers, User.id == followers.c.user_A_id)
+
         return render_template('recommend.html', item_type=item_type, item=item, followers=users)
 
     elif request.form.get('recommend_new'):
@@ -166,16 +165,27 @@ def recommend(item_type):
         user_a = current_user.id
         user_b = int(l[0])
         item = yaml.safe_load(l[1])
+
         if item_type == 'books':
             id = item['id']
+            exists = bool(BooksRecommended.query.filter_by(user_A_id=user_a, user_B_id=user_b, id=id).first())
+            if exists:
+                flash(f'You have already recommended this {item_type[:-1]} to this follower.', 'danger')
+                return redirect(url_for('main.show', item_type=item_type))
             new = BooksRecommended(user_A_id=user_a, user_B_id=user_b, book_id=id)
+
         elif item_type == 'films':
             id = f"{item['media_type']}/{item['id']}"
+            exists = bool(FilmsRecommended.query.filter_by(user_A_id=user_a, user_B_id=user_b, id=id).first())
+            if exists:
+                flash(f'You have already recommended this {item_type[:-1]} to this follower.', 'danger')
+                return redirect(url_for('main.show', item_type=item_type))
             new = FilmsRecommended(user_A_id=user_a, user_B_id=user_b, film_id=id)
+
         db.session.add(new)
         db.session.commit()
-        flash(f'You successfully recommended a new {item_type}!', 'success')
-        return redirect(url_for('main.show_post', item_type=item_type))
+        flash(f'You successfully recommended a new {item_type[:-1]}!', 'success')
+        return redirect(url_for('main.show', item_type=item_type))
 
     else:
         flash('There was a problem with this request.', 'danger')

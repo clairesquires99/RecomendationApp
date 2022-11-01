@@ -1,10 +1,11 @@
 {% extends 'base.html' %}
-{% block title %} Search {% endblock %}
+{% block title %} Search for {{ item_type[:-1] }} {% endblock %}
 
 {% block content %}
-<h1 class="text-center">Recommend a {{ item_type }}</h1>
 
-<p class="text-center">Search for any {{ item_type }}, and then recommend it to anyone you are following.</p>
+<h1 class="text-center">Recommend a {{ item_type[:-1] }}</h1>
+
+<p class="text-center">Search for any {{ item_type[:-1] }}, and then recommend it to anyone you are following.</p>
 
 <form class="mb-4">
   <div class="form-outline d-flex">
@@ -14,6 +15,13 @@
     </button>
   </div>
 </form>
+
+{% for message in get_flashed_messages(with_categories=True) %}
+  <div class="text-center">
+    <h4>No results</h4>
+    <p><i class="fa-regular fa-face-frown pe-1"></i>{{ message[1] }}</p>
+  </div>
+{% endfor %}
 
 <div class="d-flex flex-column">
   {% for item in items %}
@@ -26,7 +34,7 @@
         {% set src = 'https://image.tmdb.org/t/p/w200' ~ item['poster_path'] %}
       {% endif %}
       <div>
-        <img src="{{ src }}" class="img-fluid rounded-start" onerror="this.src='/static/default.png'" alt="image of media item">
+        <img src="{{ src }}" class="rounded-start" onerror="this.src='/static/default.png'" alt="image of media item">
       </div>
 
       <!-- Content -->
@@ -73,5 +81,6 @@
   </div>
   {% endfor %}
 </div>
+
 
 {% endblock %}

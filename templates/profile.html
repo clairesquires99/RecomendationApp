@@ -8,12 +8,12 @@
 
 <form method="POST" role="form" action="/profile">
   <div class="d-flex justify-content-center mb-1 list">
-    {% if followers %}
-      <button type="submit" name="show" value="following" class="btn btn-primary m-1">Following</button>
-      <button type="submit" name="show" value="followers" class="btn btn-primary m-1 active">Followers</button>
+    {% if not followers %}
+      <button type="submit" name="show" value="following" class="btn toggle btn-primary m-1">following</button>
+      <button type="submit" name="show" value="followers" class="btn toggle btn-outline-secondary m-1">followers</button>
     {% else %}
-    <button type="submit" name="show" value="following" class="btn btn-primary m-1 active">Following</button>  
-    <button type="submit" name="show" value="followers" class="btn btn-primary m-1">Followers</button>
+      <button type="submit" name="show" value="following" class="btn toggle btn-outline-secondary m-1">following</button>  
+      <button type="submit" name="show" value="followers" class="btn toggle btn-primary m-1">followers</button>
     {% endif %}
   </div>
 </form>
