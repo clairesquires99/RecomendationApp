@@ -1,10 +1,16 @@
-import os, json, requests
+import os, json, requests, yaml, spotipy
+from spotipy.oauth2 import SpotifyClientCredentials
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import login_required, current_user
-import yaml
 
 from .models import *
 from . import db, utils
+
+# Spotify setup
+cid = os.environ.get("SPOTIFY_API_ID")
+csecret = os.environ.get("SPOTIFY_API_KEY")
+client_credentials_manager = SpotifyClientCredentials(client_id=cid, client_secret=csecret)
+sp = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
 
 main = Blueprint('main', __name__)
 
@@ -87,7 +93,6 @@ def show(item_type):
             for item in results:
                 items.append(utils.name_to_title(item))
     else:
-        print('FORM REQUEST show (post) EXECUTED')
         if request.form['recommended'] == "to user":
             if item_type == 'books':
                 results = utils.books_rec_to_user()
@@ -135,6 +140,19 @@ def search(item_type):
             for item in data['results']:
                 item = utils.name_to_title(item)
                 items.append(item)
+    # elif 'music' in request.args:
+    #     search_word = request.args.get('music')
+        # data = sp.search(q=search_word, type='track')
+        
+    # data = sp.search(q='hello', type='track')
+    # results = data['tracks']['items']
+    # for r in results['tracks']['items']:
+    #     name = r['name']
+    #     artist = r['artists'][0]['name']
+    #     id = r['id']
+    #     print(r)
+
+
     if request.args and (len(items) == 0):
         flash(f"We coulnd't find any results for your search, sorry!", 'success')
 
