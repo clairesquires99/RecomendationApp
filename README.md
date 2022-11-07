@@ -1,10 +1,11 @@
 # Recommenda
 Recommenda is a recommendation app that allows freinds to recommend various types of media to each other. How often has a friend recommended something to you, but you don't write it down and later forget about it. Now you can have all your recommendations for books, films, podcasts, music and articles in one place! 
-**DEMO**: Try it out [here](https://clairesquires99.pythonanywhere.com/) 
+
+**DEMO**: Try it out [here](https://clairesquires99.pythonanywhere.com/).  
 ## Table of contents
 * [How to use Recommenda](#how-to-use-recommenda)
 * [User interface](#user-interface)
-* [Techonologies](#technologies)
+* [Technologies](#technologies)
 * [Project Status](#project-status)
 * [External Resources](#external-resources)
 ## How to use Recommenda
@@ -16,8 +17,11 @@ Recommenda is a recommendation app that allows freinds to recommend various type
 6. Your friend can now send you recommendations
 7. To send your friends recommendations, tell them to follow you!
 ## User interface
+![Image of the books recommended to the user](/assets/books.png)
+![Image of the films recommended by the user](/assets/films.png)
+![Image of the user's profile and thier followers](/assets/followers.png)
 
-## Techonologies
+## Technologies
 ### Libraries
 * Flask v2.2.2
 * Flask-Login v0.6.2
