@@ -11,6 +11,7 @@
   width: 300px;
 }
 
+/* Recommenda logo */
 #recommenda {
   font-family: "Fredoka One", sans-serif;
   font-style: normal;
@@ -21,6 +22,7 @@
   font-size: 1.7rem;
 }
 
+/* Recommenda wand sparkle icon */
 #recommenda i {
   padding-left: 10px;
   font-size: 1.2rem;
@@ -44,6 +46,7 @@ a {
   background-color: #0087df;
 }
 
+/* Toggle buttons used in show and profile */
 .btn.toggle {
   border-radius: 30px;
   padding: 10px;
@@ -74,16 +77,19 @@ a.btn-lg {
   height: 70px;
 }
 
+/* Icons on home page */
 .recommendations .icon {
   padding: 0 10px 0 0;
 }
 
+/* Buttons on home page */
 .recommendations .btn {
   text-transform: uppercase;
   margin: 10px 0;
   width: 200px;
 }
 
+/* Buttons (toggle) used in profile nad show */
 .list .btn {
   width: 150px;
 }
@@ -97,11 +103,13 @@ span {
   font-size: 0px;
 }
 
+/* Button at end of input feild (rounded on right, square on left) */
 .btn.end {
   border-bottom-left-radius: 0;
   border-top-left-radius: 0;
 }
 
+/* End of input feild with button at end */
 input.end {
   border-bottom-right-radius: 0;
   border-top-right-radius: 0;
@@ -117,10 +125,12 @@ input.end {
   border: none;
 }
 
+/* Images for content */
 .card img {
   width: 100px;
 }
 
+/* Limit all content to width of 500px */
 .container.max-500 {
   max-width: 500px;
   padding: 0;

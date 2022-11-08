@@ -1,28 +1,16 @@
-import os, json, requests, yaml, spotipy
-from spotipy.oauth2 import SpotifyClientCredentials
-from flask import Blueprint, render_template, request, redirect, url_for, flash
+import os, json, requests, yaml
+from flask import Blueprint, render_template, request, redirect, url_for, flash, abort
 from flask_login import login_required, current_user
 
 from .models import *
-from . import db, utils
+from . import db, sp, utils
 
-# Spotify setup
-cid = os.environ.get("SPOTIFY_API_ID")
-csecret = os.environ.get("SPOTIFY_API_KEY")
-client_credentials_manager = SpotifyClientCredentials(client_id=cid, client_secret=csecret)
-sp = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
+# This file handles everything excluding the authentication (handeled by auth.py).
+#   Each page has at least one function, if not several. 
+#   The media types are determined by the variable 'item_type'.
+
 
 main = Blueprint('main', __name__)
-
-@main.route('/update_server', methods=['POST'])
-def webhook():
-    if request.method == 'POST':
-        repo = git.Repo('./RecommendationApp')
-        origin = repo.remotes.origin
-        origin.pull()
-        return '', 200
-    else:
-        return '', 400
 
 @main.route('/home')
 @login_required
@@ -46,6 +34,7 @@ def profile():
             return render_template('profile.html', user=current_user, follow=users, followers=False)
         else:
             return redirect(url_for('main.profile'))
+
 
 @main.route('/follow_new', methods=['POST'])
 @login_required
@@ -78,7 +67,6 @@ def follow_new():
     return redirect(url_for('main.profile'))
 
 
-# MEDIA
 @main.route('/show/<item_type>', methods=['GET', 'POST'])
 @login_required
 def show(item_type):
@@ -113,6 +101,7 @@ def show(item_type):
             recs_to_user = False
     return render_template('show.html', item_type=item_type, items=items, recs_to_user=recs_to_user)
 
+
 @main.route('/search/<item_type>')
 @login_required
 def search(item_type):
@@ -140,23 +129,27 @@ def search(item_type):
             for item in data['results']:
                 item = utils.name_to_title(item)
                 items.append(item)
-    # elif 'music' in request.args:
-    #     search_word = request.args.get('music')
-        # data = sp.search(q=search_word, type='track')
-        
-    # data = sp.search(q='hello', type='track')
-    # results = data['tracks']['items']
-    # for r in results['tracks']['items']:
-    #     name = r['name']
-    #     artist = r['artists'][0]['name']
-    #     id = r['id']
-    #     print(r)
-
+    elif 'music' in request.args:
+        search_word = request.args.get('music')
+        data = sp.search(q=search_word, type='track')
+        items = data['tracks']['items']
+    
+   
+        for r in items:
+            name = r['name']
+            artist = r['artists'][0]['name']
+            id = r['id']
+            try:
+                print(r['album']['images'])
+            except:
+                print('no image')
+            print()
 
     if request.args and (len(items) == 0):
         flash(f"We coulnd't find any results for your search, sorry!", 'success')
 
     return render_template('search.html', item_type=item_type, items=items)
+    
 
 @main.route('/recommend/<item_type>', methods=['POST'])
 @login_required

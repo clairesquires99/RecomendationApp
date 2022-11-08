@@ -4,53 +4,54 @@ from flask_login import login_user, login_required, logout_user
 from .models import User
 from . import db
 
+# This file handles all the authentication - this includes users signing up, 
+#   logging in and logging out. 
+
 auth = Blueprint('auth', __name__)
 
 @auth.route('/')
-@auth.route('/login')
+@auth.route('/login', methods=['GET','POST'])
 def login():
-    return render_template('login.html')
+    if request.method == 'POST':
+        email = request.form.get('email')
+        password = request.form.get('password')
+        remember = True if request.form.get('remember') else False
 
-@auth.route('/login', methods=['POST'])
-def login_post():
-    email = request.form.get('email')
-    password = request.form.get('password')
-    remember = True if request.form.get('remember') else False
+        # Check if user exists
+        user = User.query.filter_by(email=email).first()
 
-    # Check if user exists
-    user = User.query.filter_by(email=email).first()
+        if not user or not check_password_hash(user.password, password):
+            flash('Please check your login details and try again.')
+            return redirect(url_for('auth.login'))
 
-    if not user or not check_password_hash(user.password, password):
-        flash('Please check your login details and try again.')
-        return redirect(url_for('auth.login'))
+        login_user(user, remember=remember)
+        return redirect(url_for('main.home'))
+    else:
+        return render_template('login.html')
 
-    login_user(user, remember=remember)
-    return redirect(url_for('main.home'))
-
-@auth.route('/signup')
+@auth.route('/signup', methods=['GET','POST'])
 def signup():
-    return render_template('signup.html')
+    if request.method == 'POST':
+        firstname = request.form.get('firstname')
+        lastname = request.form.get('lastname')
+        email = request.form.get('email')
+        password = request.form.get('password')
+        
+        # Check whether this email already exists
+        user = User.query.filter_by(email=email).first()
+        if user:
+            flash('Email address already exists')
+            return redirect(url_for('auth.signup'))
+        
+        new_user = User(firstname = firstname, lastname = lastname, 
+            email = email, password = generate_password_hash(password, method='sha256'))
 
-@auth.route('/signup', methods=['POST'])
-def signup_post():
-    firstname = request.form.get('firstname')
-    lastname = request.form.get('lastname')
-    email = request.form.get('email')
-    password = request.form.get('password')
-    
-    # Check whether this email already exists
-    user = User.query.filter_by(email=email).first()
-    if user:
-        flash('Email address already exists')
-        return redirect(url_for('auth.signup'))
-    
-    new_user = User(firstname = firstname, lastname = lastname, 
-        email = email, password = generate_password_hash(password, method='sha256'))
+        db.session.add(new_user)
+        db.session.commit()
 
-    db.session.add(new_user)
-    db.session.commit()
-
-    return redirect(url_for('auth.login'))
+        return redirect(url_for('auth.login'))
+    else:
+        return render_template('signup.html')
 
 @auth.route('/logout')
 @login_required

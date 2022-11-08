@@ -2,8 +2,7 @@ from os import environ, path
 from dotenv import load_dotenv
 from flask import Flask
 from flask_login import LoginManager
-from .extentions import db
-
+from .extentions import db, sp
 
 def create_app():
     app = Flask(__name__)
