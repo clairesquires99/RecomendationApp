@@ -1,16 +1,33 @@
-# Recommenda
+<div align="center">
+<img src="/assets/recommenda.jpg" style="width: 400px">
+</div>
+<br>
 
 Recommenda is a recommendation app that allows freinds to recommend various types of media to each other. How often has a friend recommended something to you, but you don't write it down and later forget about it? Now you can have all your recommendations for books, films, podcasts, music and articles in one place!
 
-**DEMO**: Try it out [here](https://clairesquires99.pythonanywhere.com/).
-
 ## Table of contents
-
+- [Description](#description)
+- [Demo](#demo)
 - [How to use Recommenda](#how-to-use-recommenda)
 - [User interface](#user-interface)
 - [Technologies](#technologies)
-- [Project Status](#project-status)
-- [External Resources](#external-resources)
+- [Project status](#project-status)
+
+## Description
+This app is primarily intended for use on mobile devices, and as such was designed using the mobile-first design principle. This app implements a social media network, where sign up and then login using an email address and password, afterwhich they are able to follow other users.
+
+## Demo
+Try it out at https://clairesquires99.pythonanywhere.com/. 
+
+Sign up or use one of the already created profiles to test the app out.
+
+**User A**<br>
+Email: _usera@gmail.com_<br>
+Password: _password_
+
+**User B**<br>
+Email: _userb@gmail.com_<br>
+Password: _password_
 
 ## How to use Recommenda
 
@@ -42,7 +59,7 @@ Recommenda is a recommendation app that allows freinds to recommend various type
 - SQLAlchemy v1.4.41
 - Bootstrap v5
 
-_For a complete list, see `requirements.txt`_
+_For a complete list, see [requirements.txt](requirements.txt)_
 
 ### APIs
 
@@ -65,5 +82,6 @@ This project is still in development. There are several features that are schedu
 
 - Allow users to recommend items to themselves
 - Lazy loading on images
-
-## External resources
+- Allow users to recommend an item to several people at once
+- Allow users to delete recommendations
+- Allow users to unfollow users they are currently following
