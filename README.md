@@ -1,6 +1,6 @@
 # Recommenda
 
-Recommenda is a recommendation app that allows freinds to recommend various types of media to each other. How often has a friend recommended something to you, but you don't write it down and later forget about it. Now you can have all your recommendations for books, films, podcasts, music and articles in one place!
+Recommenda is a recommendation app that allows freinds to recommend various types of media to each other. How often has a friend recommended something to you, but you don't write it down and later forget about it? Now you can have all your recommendations for books, films, podcasts, music and articles in one place!
 
 **DEMO**: Try it out [here](https://clairesquires99.pythonanywhere.com/).
 
@@ -23,10 +23,11 @@ Recommenda is a recommendation app that allows freinds to recommend various type
 7. To send your friends recommendations, tell them to follow you!
 
 ## User interface
-
-![Image of the books recommended to the user](/assets/books.jpg)
-![Image of the films recommended by the user](/assets/films.jpg)
-![Image of the user's profile and thier followers](/assets/followers.jpg)
+<div float="left">
+<img src="/assets/books.png" width="250px">
+<img src="/assets/films.png" width="250px">
+<img src="/assets/profile.png" width="250px">
+</div>
 
 ## Technologies
 
@@ -40,7 +41,8 @@ Recommenda is a recommendation app that allows freinds to recommend various type
 - requests v2.28.1
 - SQLAlchemy v1.4.41
 - Bootstrap v5
-  _For a complete list, see `requirements.txt`_
+
+_For a complete list, see `requirements.txt`_
 
 ### APIs
 
@@ -57,9 +59,11 @@ This project is still in development. There are several features that are schedu
 ### Features to complete
 
 - Media types of podcasts, music and articles
+- Fix problems with unreadable titles from Google Books API (causes internal server error)
 
 ### Features for UX
 
 - Allow users to recommend items to themselves
+- Lazy loading on images
 
 ## External resources
