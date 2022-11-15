@@ -3,9 +3,12 @@
 </div>
 <br>
 
-Recommenda is a recommendation app that allows freinds to recommend various types of media to each other. How often has a friend recommended something to you, but you don't write it down and later forget about it? Now you can have all your recommendations for books, films, music, podcasts and articles in one place!
+Recommenda is a recommendation app that allows friends to recommend various types of media to each other. How often has a friend recommended something to you, but you don't write it down and later forget about it? Now you can have all your recommendations for books, films, music, podcasts and articles in one place!
+
+_Official documentation at https://app.box.com/s/ly597hrfmiytj6kl55vujfvzdbrw7rto_
 
 ## Table of contents
+
 - [Description](#description)
 - [Demo](#demo)
 - [How to use Recommenda](#how-to-use-recommenda)
@@ -14,12 +17,14 @@ Recommenda is a recommendation app that allows freinds to recommend various type
 - [Project status](#project-status)
 
 ## Description
+
 This app is primarily intended for use on mobile devices, and as such was designed using the mobile-first design principle. The front-end is primarily basic bootstrap styling (this allowed me to focus on the functionality of the app).
 
-There are two main parts of functionality that were implemented: the social network, and the interaction with the APIs. The social media network allows users to sign up and then login using an email address and password, afterwhich they are able to follow other users. Once the user has followers, they can recommend items to these followers. The APIs allow users to asscess content to recommend to their followers. Various APIs are used to search and fetch content of a specific media type (e.g. books use the [Google Books API](https://developers.google.com/books/docs/v1/using)).
+There are two main parts of functionality that were implemented: the social network, and the interaction with the APIs. The social media network allows users to sign up and then login using an email address and password, after which they are able to follow other users. Once the user has followers, they can recommend items to these followers. The APIs allow users to access content to recommend to their followers. Various APIs are used to search and fetch content of a specific media type (e.g. books use the [Google Books API](https://developers.google.com/books/docs/v1/using)).
 
 ## Demo
-Try it out at https://clairesquires99.pythonanywhere.com/. 
+
+Try it out at https://clairesquires99.pythonanywhere.com/.
 
 Sign up or use one of the already created profiles to test the app out.
 
@@ -42,6 +47,7 @@ Password: _password_
 7. To send your friends recommendations, tell them to follow you!
 
 ## User interface
+
 <div float="left">
 <img src="/assets/books.png" width="250px">
 <img src="/assets/films.png" width="250px">
@@ -61,7 +67,7 @@ Password: _password_
 - SQLAlchemy v1.4.41
 - Bootstrap v5
 
-_For a complete list, see [requirements.txt](requirements.txt)_
+_For a complete list, see [requirements.txt](app/requirements.txt)_
 
 ### APIs
 
@@ -76,9 +82,11 @@ _For a complete list, see [requirements.txt](requirements.txt)_
 This project is still in development. There are several features that are scheduled to be implemented before the app is complete, as well as several features that are not strictly necessary, but will improve the user experience.
 
 ### Features to implement
+
 #### For completion
-- [x] Media type Books (realeased v1)
-- [x] Meida type Films (released v2)
+
+- [x] Media type Books (released v1)
+- [x] Media type Films (released v2)
 - [ ] Media type Music
 - [ ] Media type Podcasts
 - [ ] Media type Articles
