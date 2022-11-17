@@ -1,5 +1,5 @@
 <div align="center">
-<img src="/assets/recommenda.jpg" style="width: 400px">
+<img src="/assets/recommenda.png" style="width: 400px">
 </div>
 <br>
 
