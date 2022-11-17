@@ -74,30 +74,22 @@ def show(item_type):
     if request.method == 'GET':
         recs_to_user = True
         if item_type == 'books':
-            results = utils.books_rec_to_user()
-            items = utils.books_complete(results)
+            items = utils.books_rec_to_user()
         elif item_type == 'films':
-            results = utils.films_rec_to_user()
-            for item in results:
-                items.append(utils.name_to_title(item))
+            items = utils.films_rec_to_user()
     else:
         if request.form['recommended'] == "to user":
             if item_type == 'books':
-                results = utils.books_rec_to_user()
-                items = utils.books_complete(results)
+                items = utils.books_rec_to_user()
             elif item_type == 'films':
-                results = utils.films_rec_to_user()
-                for item in results:
-                    items.append(utils.name_to_title(item))
+                items = utils.films_rec_to_user()
             recs_to_user = True
         elif request.form['recommended'] == "by user":
             if item_type == 'books':
-                results = utils.books_rec_by_user()
-                items = utils.books_complete(results)
+                items = utils.books_rec_by_user()
             elif item_type == 'films':
-                results = utils.films_rec_by_user()
-                for item in results:
-                    items.append(utils.name_to_title(item))
+                print("showing films rec by user")
+                items = utils.films_rec_by_user()
             recs_to_user = False
     return render_template('show.html', item_type=item_type, items=items, recs_to_user=recs_to_user)
 
@@ -107,43 +99,50 @@ def show(item_type):
 def search(item_type):
     items = []
     data = None # default
+
+    # fetch response to search query from API
     if 'books' in request.args:
         search_word = request.args.get('books')
-        link = f'https://www.googleapis.com/books/v1/volumes?q={search_word}&key='
-        link += os.environ.get("GOOGLE_BOOKS_API")
-        response = requests.get(link)
+        response = utils.fetch_books(search_word)
         if response.status_code == 200:
             data = json.loads(response.content)
-            if data and int(data['totalItems']) > 0:
-                items = data['items']
-                items = utils.books_complete(items)
+        else:
+            pass # invalid response from API
+        if data and int(data['totalItems']) > 0:
+            json_strings = data['items']
+            for jstring in json_strings:
+                item = utils.book_to_item(jstring)
+                if item: items.append(item)
+
     elif 'films' in request.args:
         search_word = request.args.get('films')
-        link = 'https://api.themoviedb.org/3/search/multi?api_key='
-        link += os.environ.get("FILM_API")
-        link += f'&query={search_word}'
-        response = requests.get(link)
+        response = utils.fetch_films(search_word)
         if response.status_code == 200:
             data = json.loads(response.content)
+        else:
+            pass # invalid response from API
         if data:
-            for item in data['results']:
-                item = utils.name_to_title(item)
-                items.append(item)
-    elif 'music' in request.args:
-        search_word = request.args.get('music')
-        data = sp.search(q=search_word, type='track')
-        items = data['tracks']['items']
+            json_strings = data['results']
+            for jstring in json_strings:
+                # print(jstring)
+                item = utils.film_to_item(jstring)
+                if item:  items.append(item)
+
+    # elif 'music' in request.args:
+    #     search_word = request.args.get('music')
+    #     data = sp.search(q=search_word, type='track')
+    #     items = data['tracks']['items']
     
    
-        for r in items:
-            name = r['name']
-            artist = r['artists'][0]['name']
-            id = r['id']
-            try:
-                print(r['album']['images'])
-            except:
-                print('no image')
-            print()
+    #     for r in items:
+    #         name = r['name']
+    #         artist = r['artists'][0]['name']
+    #         id = r['id']
+    #         try:
+    #             print(r['album']['images'])
+    #         except:
+    #             print('no image')
+    #         print()
 
     if request.args and (len(items) == 0):
         flash(f"We coulnd't find any results for your search, sorry!", 'success')
@@ -156,14 +155,7 @@ def search(item_type):
 def recommend(item_type):
     if request.form.get('recommend'):
         item = request.form['recommend']
-        # item = item.replace('"', '\\"')
-        # item = item.replace("'", '"')
         item = yaml.safe_load(item)
-        
-        if item_type == 'books':
-            item['title'] = item['volumeInfo']['title']
-        elif item_type == 'films':
-            item = utils.name_to_title(item)
 
         followers = db.session.query(Follower.user_A_id).filter(Follower.user_B_id == current_user.id).subquery()
         users = User.query.join(followers, User.id == followers.c.user_A_id)
@@ -177,8 +169,9 @@ def recommend(item_type):
         user_b = int(l[0])
         item = yaml.safe_load(l[1])
 
+        id = item['id']
+
         if item_type == 'books':
-            id = item['id']
             exists = bool(BooksRecommended.query.filter_by(user_A_id=user_a, user_B_id=user_b, id=id).first())
             if exists:
                 flash(f'You have already recommended this {item_type[:-1]} to this follower.', 'danger')
@@ -186,7 +179,6 @@ def recommend(item_type):
             new = BooksRecommended(user_A_id=user_a, user_B_id=user_b, book_id=id)
 
         elif item_type == 'films':
-            id = f"{item['media_type']}/{item['id']}"
             exists = bool(FilmsRecommended.query.filter_by(user_A_id=user_a, user_B_id=user_b, id=id).first())
             if exists:
                 flash(f'You have already recommended this {item_type[:-1]} to this follower.', 'danger')

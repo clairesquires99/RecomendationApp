@@ -43,23 +43,17 @@
       <div class="d-flex">
 
         <!-- Image -->
-        {% if item_type == 'books' %}
-          {% set src = item['volumeInfo']['imageLinks']['smallThumbnail'] %}
-        {% elif item_type == 'films' %}
-          {% set src = 'https://image.tmdb.org/t/p/w200' ~ item['poster_path'] %}
-        {% endif %}
-
         <div>
-          <img src="{{ src }}" class="rounded-start" onerror="this.src='/static/default.png'" alt="image of media item">
+          <img src="{{ item['image_link'] }}" class="rounded-start" onerror="this.src='/static/default.png'" alt="image of media item">
         </div>
 
         <!-- Content -->
         <div class="card-body flex-fill p-2">
+          <h5 class="card-title">{{item['title']}}</h5>
 
           {% if item_type == 'books' %}
-          <h5 class="card-title">{{item['volumeInfo']['title']}}</h5>
           <h6 class="card-subtitle mb-2 text-muted nospace"><nobr><span>by&nbsp;</span>
-            {% set authors = item['volumeInfo']['authors'] %}
+            {% set authors = item['authors'] %}
             {% if authors %}
               <span>{{authors[0]}}</span>
               {% if authors|length > 2 %}
@@ -69,9 +63,7 @@
               {% endif %}
             {% endif %}
           </nobr></h6>
-
-          {% elif item_type == 'films' %}
-          <h5 class="card-title">{{item['title']}}</h5>
+          
           {% endif %}
           
           <!-- Recommended info -->

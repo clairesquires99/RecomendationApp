@@ -27,64 +27,31 @@
   {% for item in items %}
   <div class="card w-100 mb-2">
     <div class="d-flex">
-      <!-- Image -->
-      {% if item_type == 'books' %}
-        {% set src = item['volumeInfo']['imageLinks']['smallThumbnail'] %}
-      {% elif item_type == 'films' %}
-        {% set src = 'https://image.tmdb.org/t/p/w200' ~ item['poster_path'] %}
-      {% elif item_type == 'music' %}
-        {% set src = item['album']['images'][1]['url'] %}
-      {% endif %}
       <div>
-        <img src="{{ src }}" class="rounded-start" onerror="this.src='/static/default.png'" alt="image of media item">
+        <img src="{{ item['image_link'] }}" class="rounded-start" onerror="this.src='/static/default.png'" alt="image of media item">
       </div>
 
       <!-- Content -->
       <div class="card-body flex-fill d-flex justify-content-between p-2">
-        {% if item_type == 'books' %}
         <div>
-          <h5 class="card-title">{{item['volumeInfo']['title']}}</h5>
+          <h5 class="card-title">{{item['title']}}</h5>
           <h6 class="card-subtitle mb-2 text-muted nospace">
-            {% set authors = item['volumeInfo']['authors'] %}
-            {% if authors %}
-              <span>by&nbsp;</span>
-              {% if authors|length == 1 %}
-                <span>{{authors[0]}}</span>
-              {% else %}
-                {% for author in authors[:-1] %}
-                  <span>{{author}},&nbsp;</span>
-                {% endfor %}
-                <span>{{authors[-1]}}</span>
+            {% if (item_type == 'books') or (item_type == 'music') %}
+              {% set authors = item['authors'] %}
+              {% if authors %}
+                <span>by&nbsp;</span>
+                {% if authors|length == 1 %}
+                  <span>{{authors[0]}}</span>
+                {% else %}
+                  {% for author in authors[:-1] %}
+                    <span>{{author}},&nbsp;</span>
+                  {% endfor %}
+                  <span>{{authors[-1]}}</span>
+                {% endif %}
               {% endif %}
             {% endif %}
           </h6>
         </div>
-
-        {% elif item_type == 'films' %}
-        <div>
-          <h5 class="card-title">{{ item['title'] }}</h5>
-        </div>
-
-        {% elif item_type == 'music' %}
-        <div>
-          <h5 class="card-title">{{ item['name'] }}</h5>
-          <h6 class="card-subtitle mb-2 text-muted nospace">
-            {% set artists = item['artists'] %}
-            {% if artists %}
-              <span>by&nbsp;</span>
-              {% if artists|length == 1 %}
-                <span>{{artists[0]['name']}}</span>
-              {% else %}
-                {% for artist in artists[:-1] %}
-                  <span>{{artist['name']}},&nbsp;</span>
-                {% endfor %}
-                <span>{{artists[-1]['name']}}</span>
-              {% endif %}
-            {% endif %}
-          </h6>
-        </div>
-
-        {% endif %}
 
         <!-- Recommend button -->
         <div>

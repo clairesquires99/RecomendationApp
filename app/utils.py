@@ -5,39 +5,86 @@ import requests, json, os
 from .models import *
 from . import db
 
-# fix books without authors or thumbnails
-def books_complete(og_items):
-    items = []
-    for item in og_items:
-        try: 
-            item['volumeInfo']['imageLinks']['smallThumbnail']
-        except: 
-            item['volumeInfo']['imageLinks'] = {'smallThumbnail': 'none'}
-        else: 
-            # remove the page curl on image
-            item['volumeInfo']['imageLinks']['smallThumbnail'] = \
-                item['volumeInfo']['imageLinks']['smallThumbnail'].replace("&edge=curl", "")
-        try: item['volumeInfo']['authors']
-        except: item['volumeInfo'] = {'authors': None}
-        items.append(item)
-    return items
+def fetch_books(search_word):
+    link = f'https://www.googleapis.com/books/v1/volumes?q={search_word}&key='
+    link += os.environ.get("GOOGLE_BOOKS_API")
+    response = requests.get(link)
+    return response
 
-# def name_to_title(item):
-#     if item['media_type'] == 'tv':
-#         # correct for inconsitent naming movie vs tv
-#         item['title'] = item['name']
-#     return item
+def fetch_films(search_word):
+    link = 'https://api.themoviedb.org/3/search/multi?api_key='
+    link += os.environ.get("FILM_API")
+    link += f'&query={search_word}'
+    response = requests.get(link)
+    return response
 
-# correct for inconsitent naming movie vs tv
-def name_to_title(item):
-    try:
-        # media_type = movie
-        title = item['title']
-    except:
-        # media_type = tv
-        title = item['name']
-    item['title'] = title
+# input: JSON string of book from Google Books API
+# output: informally defined item object
+def book_to_item(json_string):
+    item = {}
+
+    # json_strings without ids should return None since they cannot be processed
+    try: item['id'] = json_string['id']
+    except: return None
+
+    try: item['title'] = json_string['volumeInfo']['title']
+    except: item['title'] = None
+
+    try: item['authors'] = json_string['volumeInfo']['authors']
+    except: item['authors'] = None
+
+    try: item['image_link'] = json_string['volumeInfo']['imageLinks']['smallThumbnail'].replace("&edge=curl", "")
+    except: item['image_link'] = None
+
+    item['type'] = 'book'
+
     return item
+
+# input: JSON string of film from The Movie Database
+def film_to_item(json_string):
+    item = {}
+
+    # remove people from results
+    try: 
+        if json_string['media_type'] == "person":
+            return None
+    except: pass
+
+    # json_strings without ids should return None since they cannot be processed
+    try: id = str(json_string['id'])
+    except: return None
+
+    # testing media_type == "movie"
+    try: 
+        # if json_string has title field then media type is movie
+        item['title'] = json_string['title']
+    except:
+        item['title'] = None # try tv
+    else:
+        id = "movie/" + id
+
+    # testing media_type == "tv"
+    if not item['title']:
+        try:
+            # if json_string has name field then media type is tv
+            item['title'] = json_string['name']
+        except:
+           pass
+        else:
+            id = "tv/" + id
+
+    item['id'] = id
+    item['authors'] = None
+
+    try: item['image_link'] = 'https://image.tmdb.org/t/p/w200' + json_string['poster_path']
+    except: item['image_link'] = None
+
+    item['type'] = 'film'
+
+    return item
+
+# item['name']
+# MUSIC image src = item['album']['images'][1]['url']
 
 # return books recommended to user
 def books_rec_to_user():
@@ -51,12 +98,13 @@ def books_rec_to_user():
         for r in results:
             response = requests.get(link + r.book_id)
             if response.status_code == 200:
-                data = json.loads(response.content)
                 user = User.query.filter_by(id=r.user_A_id).first()
-                data['fname'] = user.firstname
-                data['lname'] = user.lastname
-                data['date'] = r.date
-                books.append(data)
+                data = json.loads(response.content)
+                item = book_to_item(data)
+                item['fname'] = user.firstname
+                item['lname'] = user.lastname
+                item['date'] = r.date
+                books.append(item)
     return books
 
 # return books recommended by user
@@ -71,12 +119,13 @@ def books_rec_by_user():
         for r in results:
             response = requests.get(link + r.book_id)
             if response.status_code == 200:
-                data = json.loads(response.content)
                 user = User.query.filter_by(id=r.user_B_id).first()
-                data['fname'] = user.firstname
-                data['lname'] = user.lastname
-                data['date'] = r.date
-                books.append(data)
+                data = json.loads(response.content)
+                item = book_to_item(data)
+                item['fname'] = user.firstname
+                item['lname'] = user.lastname
+                item['date'] = r.date
+                books.append(item)
     return books
 
 # return films recommended to user
@@ -92,12 +141,13 @@ def films_rec_to_user():
             # by default try media_type = movie 
             response = requests.get(f'{link}{r.film_id}?api_key={os.environ.get("FILM_API")}')
             if response.status_code == 200:
-                data = json.loads(response.content)
                 user = User.query.filter_by(id=r.user_A_id).first()
-                data['fname'] = user.firstname
-                data['lname'] = user.lastname
-                data['date'] = r.date
-                films.append(data)
+                data = json.loads(response.content)
+                item = film_to_item(data)
+                item['fname'] = user.firstname
+                item['lname'] = user.lastname
+                item['date'] = r.date
+                films.append(item)
     return films
 
 # return films recommended by user
@@ -110,15 +160,15 @@ def films_rec_by_user():
     if results:
         link = 'https://api.themoviedb.org/3/'
         for r in results:
-            # by default try media_type = movie 
             response = requests.get(f'{link}{r.film_id}?api_key={os.environ.get("FILM_API")}')
             if response.status_code == 200:
-                data = json.loads(response.content)
                 user = User.query.filter_by(id=r.user_B_id).first()
-                data['fname'] = user.firstname
-                data['lname'] = user.lastname
-                data['date'] = r.date
-                films.append(data)
+                data = json.loads(response.content)
+                item = film_to_item(data)
+                item['fname'] = user.firstname
+                item['lname'] = user.lastname
+                item['date'] = r.date
+                films.append(item)
     return films
 
 # return user's followers

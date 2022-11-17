@@ -99,3 +99,4 @@ This project is still in development. There are several features that are schedu
 - [ ] Allow users to recommend an item to several people at once
 - [ ] Allow users to delete recommendations
 - [ ] Allow users to unfollow users they are currently following
+- [ ] Custom 'page not found' page

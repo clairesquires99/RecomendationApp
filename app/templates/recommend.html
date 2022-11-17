@@ -9,13 +9,8 @@
     <div class="d-flex">
 
       <!-- Image -->
-      {% if item_type == 'books' %}
-        {% set src = item['volumeInfo']['imageLinks']['smallThumbnail'] %}
-      {% elif item_type == 'films' %}
-        {% set src = 'https://image.tmdb.org/t/p/w200' ~ item['poster_path'] %}
-      {% endif %}
       <div>
-        <img src="{{ src }}" class="img-fluid rounded-start" onerror="this.src='/static/default.png'" alt="image of media item">
+        <img src="{{ item['image_link'] }}" class="img-fluid rounded-start" onerror="this.src='/static/default.png'" alt="image of media item">
       </div>
 
       <!-- Content -->
