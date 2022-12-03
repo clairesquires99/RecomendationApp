@@ -51,7 +51,7 @@
         <div class="card-body flex-fill p-2">
           <h5 class="card-title">{{item['title']}}</h5>
 
-          {% if item_type == 'books' %}
+          {% if item_type != 'films' %}
           <h6 class="card-subtitle mb-2 text-muted nospace"><nobr><span>by&nbsp;</span>
             {% set authors = item['authors'] %}
             {% if authors %}
