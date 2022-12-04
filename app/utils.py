@@ -237,12 +237,10 @@ def music_rec_to_user():
         .order_by(desc(MusicRecommended.date)).all()
     music = []
     if results:
-        link = 'http://open.spotify.com/track/'
         for r in results:
-            response = requests.get(f'{link}{r.music_id}')
-            if response.status_code == 200:
+            data = sp.track(r.music_id)
+            if data:
                 user = User.query.filter_by(id=r.user_A_id).first()
-                data = json.loads(response.content)
                 item = music_to_item(data)
                 item['fname'] = user.firstname
                 item['lname'] = user.lastname
@@ -258,7 +256,6 @@ def music_rec_by_user():
         .filter(MusicRecommended.user_A_id == current_user.id)\
         .order_by(desc(MusicRecommended.date)).all()
     music = []
-
     if results:
         for r in results:
             data = sp.track(r.music_id)
@@ -268,19 +265,7 @@ def music_rec_by_user():
                 item['fname'] = user.firstname
                 item['lname'] = user.lastname
                 item['date'] = r.date
-                print(item)
                 music.append(item)
-            # response = requests.get(f'{link}{r.music_id}')
-            # print(f'{link}{r.music_id}')
-            # print(response.content)
-            # if response.status_code == 200:
-            #     user = User.query.filter_by(id=r.user_B_id).first()
-            #     data = json.loads(response.content)
-            #     item = music_to_item(data)
-            #     item['fname'] = user.firstname
-            #     item['lname'] = user.lastname
-            #     item['date'] = r.date
-            #     music.append(item)
     return music
 
 

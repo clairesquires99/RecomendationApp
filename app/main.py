@@ -106,7 +106,6 @@ def show(item_type):
     return render_template('show.html', item_type=item_type, items=items, recs_to_user=recs_to_user)
 
 
-# music added successfully
 @main.route('/search/<item_type>')
 @login_required
 def search(item_type):
@@ -158,7 +157,6 @@ def search(item_type):
     return render_template('search.html', item_type=item_type, items=items)
 
 
-# music added
 @main.route('/recommend/<item_type>', methods=['POST'])
 @login_required
 def recommend(item_type):
@@ -183,7 +181,7 @@ def recommend(item_type):
 
         if item_type == 'books':
             exists = bool(BooksRecommended.query.filter_by(
-                user_A_id=user_a, user_B_id=user_b, id=id).first())
+                user_A_id=user_a, user_B_id=user_b, book_id=id).first())
             if exists:
                 flash(
                     f'You have already recommended this {item_type[:-1]} to this follower.', 'danger')
@@ -193,7 +191,7 @@ def recommend(item_type):
 
         elif item_type == 'films':
             exists = bool(FilmsRecommended.query.filter_by(
-                user_A_id=user_a, user_B_id=user_b, id=id).first())
+                user_A_id=user_a, user_B_id=user_b, film_id=id).first())
             if exists:
                 flash(
                     f'You have already recommended this {item_type[:-1]} to this follower.', 'danger')
@@ -203,7 +201,7 @@ def recommend(item_type):
 
         elif item_type == 'music':
             exists = bool(MusicRecommended.query.filter_by(
-                user_A_id=user_a, user_B_id=user_b, id=id).first())
+                user_A_id=user_a, user_B_id=user_b, music_id=id).first())
             if exists:
                 flash(
                     f'You have already recommended this {item_type} to this follower.', 'danger')
