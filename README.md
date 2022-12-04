@@ -87,7 +87,7 @@ This project is still in development. There are several features that are schedu
 
 - [x] Media type Books (released v1)
 - [x] Media type Films (released v2)
-- [ ] Media type Music
+- [x] Media type Music
 - [ ] Media type Podcasts
 - [ ] Media type Articles
 - [ ] Fix problems with unreadable titles from Google Books API (causes internal server error)
