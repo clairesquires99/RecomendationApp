@@ -3,9 +3,15 @@
 
 {% block content %}
 
-<h1 class="text-center">Recommend a {{ item_type[:-1] }}</h1>
+{% if item_type == "music" %}
+  {% set type_for_message = "music" %}
+{% else %}
+  {% set type_for_message = "a " + item_type[:-1] %}
+{% endif %}
 
-<p class="text-center">Search for any {{ item_type[:-1] }}, and then recommend it to anyone you are following.</p>
+<h1 class="text-center">Recommend {{ type_for_message}}</h1>
+
+<p class="text-center">Search for {{ type_for_message }}, and then recommend it to anyone you are following.</p>
 
 <form class="mb-4">
   <div class="form-outline d-flex">

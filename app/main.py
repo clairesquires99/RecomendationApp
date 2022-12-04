@@ -152,7 +152,7 @@ def search(item_type):
                     items.append(item)
 
     if request.args and (len(items) == 0):
-        flash(f"We coulnd't find any results for your search, sorry!", 'success')
+        flash(f"We coulnd't find any results for your search, sorry!")
 
     return render_template('search.html', item_type=item_type, items=items)
 
@@ -183,8 +183,10 @@ def recommend(item_type):
             exists = bool(BooksRecommended.query.filter_by(
                 user_A_id=user_a, user_B_id=user_b, book_id=id).first())
             if exists:
-                flash(
-                    f'You have already recommended this {item_type[:-1]} to this follower.', 'danger')
+                if item_type == 'music':
+                    flash(f'You have already recommended this music track to this follower.', 'danger')
+                else:
+                    flash(f'You have already recommended this {item_type[:-1]} to this follower.', 'danger')
                 return redirect(url_for('main.show', item_type=item_type))
             new = BooksRecommended(
                 user_A_id=user_a, user_B_id=user_b, book_id=id)
@@ -211,8 +213,10 @@ def recommend(item_type):
 
         db.session.add(new)
         db.session.commit()
-        flash(
-            f'You successfully recommended a new {item_type[:-1]}!', 'success')
+        if item_type == 'music':
+            flash(f'You successfully recommended a new music track!', 'success')
+        else:
+            flash(f'You successfully recommended a new {item_type[:-1]}!', 'success')
         return redirect(url_for('main.show', item_type=item_type))
 
     else:

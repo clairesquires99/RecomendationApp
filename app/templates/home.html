@@ -6,7 +6,7 @@
 <div class="d-flex flex-column align-items-center recommendations">
   <a href="{{ url_for('main.show', item_type='books') }}" class="btn btn-primary btn-lg"><i class="fa-solid fa-book-open icon"></i>Books</a>
   <a href="{{ url_for('main.show', item_type='films') }}" class="btn btn-primary btn-lg" ><i class="fa-solid fa-video icon"></i>Films</a>
-  <a class="btn btn-primary btn-lg disabled" aria-disabled="true"><i class="fa-solid fa-music icon"></i>Music</a>
+  <a href="{{ url_for('main.show', item_type='music') }}" class="btn btn-primary btn-lg" ><i class="fa-solid fa-music icon"></i>Music</a>
   <a class="btn btn-primary btn-lg disabled" aria-disabled="true"><i class="fa-solid fa-podcast icon"></i>Podcasts</a>
   <a class="btn btn-primary btn-lg disabled" aria-disabled="true"><i class="fa-solid fa-file-lines icon"></i>Articles</a>
 </div>
