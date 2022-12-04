@@ -6,7 +6,7 @@ from spotipy.oauth2 import SpotifyClientCredentials
 db = SQLAlchemy()
 
 # Spotify setup
-cid = os.environ.get("SPOTIFY_API_ID")
+cid = os.environ.get("SPOTIPY_CLIENT_ID")
 csecret = os.environ.get("SPOTIFY_API_KEY")
 client_credentials_manager = SpotifyClientCredentials(
     client_id=cid, client_secret=csecret)
