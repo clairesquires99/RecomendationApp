@@ -106,7 +106,7 @@ def film_to_item(json_string):
     return item
 
 
-# input: JSON string of film from Spotify API
+# input: JSON string of music track from Spotify API
 # output: informally defined item object
 def music_to_item(json_string):
     item = {}
@@ -138,6 +138,32 @@ def music_to_item(json_string):
 
     return item
 
+
+# input: JSON string of podcast from Spotify API
+# output: informally defined item object
+def podcast_to_item(json_string):
+    item = {}
+
+    try:
+        item['id'] = json_string['id']
+    except:
+        return None
+
+    try:
+        item['title'] = json_string['name']
+    except:
+        item['title'] = None
+
+    item['authors'] = None # Spotify episodes/shows do not have author/host feilds
+
+    try:
+        item['image_link'] = json_string['images'][1]['url']
+    except:
+        item['image_link'] = None
+
+    item['type'] = 'podcast'
+
+    return item
 
 # return books recommended to user
 def books_rec_to_user():
@@ -267,6 +293,47 @@ def music_rec_by_user():
                 item['date'] = r.date
                 music.append(item)
     return music
+
+
+# return podcasts recommended to user
+def podcasts_rec_to_user():
+    results = db.session.query(PodcastsRecommended)\
+        .with_entities(PodcastsRecommended.podcast_id, PodcastsRecommended.user_A_id, PodcastsRecommended.date)\
+        .filter(PodcastsRecommended.user_B_id == current_user.id)\
+        .order_by(desc(PodcastsRecommended.date)).all()
+    podcasts = []
+    if results:
+        for r in results:
+            data = sp.episode(r.podcast_id, market='GB')
+            if data:
+                user = User.query.filter_by(id=r.user_A_id).first()
+                item = podcast_to_item(data)
+                item['fname'] = user.firstname
+                item['lname'] = user.lastname
+                item['date'] = r.date
+                podcasts.append(item)
+    return podcasts
+
+
+# return podcasts recommended by user
+def podcasts_rec_by_user():
+    results = db.session.query(PodcastsRecommended)\
+        .with_entities(PodcastsRecommended.podcast_id, PodcastsRecommended.user_B_id, PodcastsRecommended.date)\
+        .filter(PodcastsRecommended.user_A_id == current_user.id)\
+        .order_by(desc(PodcastsRecommended.date)).all()
+    podcasts = []
+    if results:
+        for r in results:
+            data = sp.episode(r.podcast_id, market='GB')
+            if data:
+                user = User.query.filter_by(id=r.user_B_id).first()
+                item = podcast_to_item(data)
+                item['fname'] = user.firstname
+                item['lname'] = user.lastname
+                item['date'] = r.date
+                podcasts.append(item)
+    return podcasts
+
 
 
 # return user's followers

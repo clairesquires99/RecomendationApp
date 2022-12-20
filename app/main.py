@@ -86,6 +86,8 @@ def show(item_type):
             items = utils.films_rec_to_user()
         elif item_type == 'music':
             items = utils.music_rec_to_user()
+        elif item_type == 'podcasts':
+            items = utils.podcasts_rec_to_user()
     else:
         if request.form['recommended'] == "to user":
             if item_type == 'books':
@@ -94,6 +96,8 @@ def show(item_type):
                 items = utils.films_rec_to_user()
             elif item_type == 'music':
                 items = utils.music_rec_to_user()
+            elif item_type == 'podcasts':
+                items = utils.podcasts_rec_to_user()
             recs_to_user = True
         elif request.form['recommended'] == "by user":
             if item_type == 'books':
@@ -102,6 +106,8 @@ def show(item_type):
                 items = utils.films_rec_by_user()
             elif item_type == 'music':
                 items = utils.music_rec_by_user()
+            elif item_type == 'podcasts':
+                items = utils.podcasts_rec_by_user()
             recs_to_user = False
     return render_template('show.html', item_type=item_type, items=items, recs_to_user=recs_to_user)
 
@@ -148,6 +154,16 @@ def search(item_type):
         if json_strings:
             for jstring in json_strings:
                 item = utils.music_to_item(jstring)
+                if item:
+                    items.append(item)
+
+    elif 'podcasts' in request.args:
+        search_word = request.args.get('podcasts')
+        data = sp.search(q=search_word, type='episode,show', market='GB')
+        json_strings = data['episodes']['items']
+        if json_strings:
+            for jstring in json_strings:
+                item = utils.podcast_to_item(jstring)
                 if item:
                     items.append(item)
 
@@ -210,6 +226,16 @@ def recommend(item_type):
                 return redirect(url_for('main.show', item_type=item_type))
             new = MusicRecommended(
                 user_A_id=user_a, user_B_id=user_b, music_id=id)
+        
+        elif item_type == 'podcasts':
+            exists = bool(PodcastsRecommended.query.filter_by(
+                user_A_id=user_a, user_B_id=user_b, podcast_id=id).first())
+            if exists:
+                flash(
+                    f'You have already recommended this {item_type} to this follower.', 'danger')
+                return redirect(url_for('main.show', item_type=item_type))
+            new = PodcastsRecommended(
+                user_A_id=user_a, user_B_id=user_b, podcast_id=id)
 
         db.session.add(new)
         db.session.commit()

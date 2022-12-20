@@ -46,6 +46,16 @@ a {
   background-color: #0087df;
 }
 
+.card-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  line-height: 1.2; /* fallback */
+  max-height: 3.6; /* fallback */
+  -webkit-line-clamp: 3; /* number of lines to show */
+  -webkit-box-orient: vertical;
+}
+
 /* Toggle buttons used in show and profile */
 .btn.toggle {
   border-radius: 30px;

@@ -74,7 +74,7 @@ _For a complete list, see [requirements.txt](app/requirements.txt)_
 - Books: [Google Books API](https://developers.google.com/books/docs/v1/using)
 - Films: [The Movie Database API](https://developers.themoviedb.org/3/getting-started/introduction)
 - Music: [Spotify API](https://developer.spotify.com/documentation/web-api/)
-- Podcasts: tbc
+- Podcasts: [Spotify API](https://developer.spotify.com/documentation/web-api/)
 - Articles: tbc
 
 ## Project status
@@ -87,13 +87,14 @@ This project is still in development. There are several features that are schedu
 
 - [x] Media type Books (released v1)
 - [x] Media type Films (released v2)
-- [ ] Media type Music
-- [ ] Media type Podcasts
+- [x] Media type Music
+- [x] Media type Podcasts
 - [ ] Media type Articles
-- [ ] Fix problems with unreadable titles from Google Books API (causes internal server error)
+- [x] Fix problems with unreadable titles from Google Books API (causes internal server error)
 
 #### For improved user experience
 
+- [x] Restrict titles of items to three lines
 - [ ] Allow users to recommend items to themselves
 - [ ] Lazy loading on images
 - [ ] Allow users to recommend an item to several people at once

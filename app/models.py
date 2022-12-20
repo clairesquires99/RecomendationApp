@@ -2,6 +2,14 @@ from flask_login import UserMixin
 from .extentions import db
 import datetime
 
+"""
+COMMANDS TO UPDATE DB WITH NEW TABLE
+1. cd RecommendationApp
+2. open python terminal (>>>python)
+3. >>>from app import models, db, create_app
+4. >>>create_all(app=create_app())
+"""
+
 
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -45,4 +53,13 @@ class MusicRecommended(db.Model):
     user_A_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     user_B_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     music_id = db.Column(db.String(12), nullable=False)
+    date = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+
+class PodcastsRecommended(db.Model):
+    # A recommended podcast to B
+    # B must follow A
+    id = db.Column(db.Integer, primary_key=True)
+    user_A_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    user_B_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    podcast_id = db.Column(db.String(12), nullable=False)
     date = db.Column(db.DateTime, default=datetime.datetime.utcnow)

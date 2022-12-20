@@ -7,3 +7,7 @@ https://app.brandmark.io/v3/#logo_data=%7B%22keywords%22%3A%22recommend%22%2C%22
 heading font: Fredoka One
 other text: Source sans pro
 https://typ.io/s/b0pp
+
+lazy loading images
+https://web.dev/lazy-loading-images/
+<img class="lazy" src="placeholder-image.jpg" data-src="image-to-lazy-load-1x.jpg" data-srcset="image-to-lazy-load-2x.jpg 2x, image-to-lazy-load-1x.jpg 1x" alt="I'm an image!">
